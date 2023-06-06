@@ -67,17 +67,19 @@ class AppConfig:
                 "is_linux":1,
                 # "instance_types":[InstanceType.of(InstanceClass.BURSTABLE3, InstanceSize.LARGE)],
                 "instance_types":["m5.large","m5.2xlarge"],
-                "worker_machine_image":"ami-04b2e5b4347640f28",
+                "worker_machine_image":"",
                 "max_capacity":1,
                 "allocation_strategy":SpotFleetAllocationStrategy.CAPACITY_OPTIMIZED,
+                "user_data_script":""
             },
             "fleet2": {
                 "name":"Maya",
                 "is_linux":1,
                 "instance_types":["m5.large","m5.2xlarge"],
-                "worker_machine_image":"ami-05a11a57ee5cc027c",
+                "worker_machine_image":"",
                 "max_capacity":1,
                 "allocation_strategy":SpotFleetAllocationStrategy.CAPACITY_OPTIMIZED,
+                "user_data_script":""
             }
         }
 

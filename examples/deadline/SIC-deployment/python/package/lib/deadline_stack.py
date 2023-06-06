@@ -23,6 +23,7 @@ from aws_cdk.aws_ec2 import (
     Vpc,
 )
 from aws_cdk.aws_iam import (
+    Group,
     ManagedPolicy,
     PolicyDocument,
     PolicyStatement,
@@ -106,10 +107,11 @@ class DeadlineStackProps(StackProps):
 
 # USER DATA Handling
 class UserDataProvider(InstanceUserDataProvider):
-    def __init__(self, scope: Construct, stack_id: str, *, props: DeadlineStackProps, os_key: int, **kwargs):
+    def __init__(self, scope: Construct, stack_id: str, *, props: DeadlineStackProps, os_key: int, user_data_script=None, **kwargs):
         super().__init__(scope, stack_id, **kwargs)
         self.props=props
         self.os_key=os_key
+        self.user_data_script=user_data_script
         
     def pre_render_queue_configuration(self, host) -> None:
         host.user_data.add_commands("echo preRenderQueueConfiguration")
@@ -127,6 +129,12 @@ class UserDataProvider(InstanceUserDataProvider):
             bucket_key=bucket_key_script
         )
         host.user_data.add_execute_file_command(file_path=local_path)
+        if self.user_data_script is not None:
+            user_data_path = host.user_data.add_s3_download_command(
+            bucket=license_bucket,
+            bucket_key=f'deadline/{self.user_data_script}'
+            )
+            host.user_data.add_execute_file_command(file_path=user_data_path)
     def pre_worker_configuration(self, host) -> None:
         if self.os_key == 1:
             host.user_data.add_commands("/opt/Thinkbox/Deadline10/bin/deadlinecommand -SetIniFileSetting ProxyRoot0 'renderqueue.deadline.internal:4433'")
@@ -153,6 +161,12 @@ class DeadlineStack(Stack):
         """
         super().__init__(scope, stack_id, **kwargs)
         
+
+        # Create Cloud9 IAM group
+        cloud9IamGroup= Group(self, "Cloud9Admin")
+        cloud9IamGroup.add_managed_policy(ManagedPolicy.from_aws_managed_policy_name('AWSCloud9Administrator'))
+
+
          # The VPC that all components of the render farm will be created in.
         vpc = Vpc(
             self,
@@ -349,6 +363,22 @@ class DeadlineStack(Stack):
                 role_name= 'DeadlineResourceTrackerAccessRole',
             )
         
+        # Spot fleet Security group
+        worker_fleet_sg = SecurityGroup(
+                self,
+                "Deadline_workers_fleet",
+                vpc=vpc,
+                allow_all_outbound=True,
+                description="Deadline_workers_fleet",
+                security_group_name="deadline_workers_fleet"
+                
+            )
+        worker_fleet_sg.add_ingress_rule(
+                peer=Peer.ipv4(props.sic_vpc_cidr),
+                connection=Port.all_traffic(),
+                description="allow fleet workers to access licence server or workstation to be able to check worker logs"
+            )
+        
         # iterate through props.fleet_config dict
         spot_fleet=[];
         for i, fleet in props.fleet_config.items():
@@ -362,12 +392,17 @@ class DeadlineStack(Stack):
             for l in fleet["instance_types"]:
                 instance_type_format= InstanceType(l)
                 instance_type_format_list.append(instance_type_format)
+            if "user_data_script" in fleet:
+                user_data_script=fleet["user_data_script"]
+            else:
+                user_data_script=None
             spot_fleet_config = SpotEventPluginFleet(
                         self,
                         f'{fleet["name"]}_spot_event_plugin_fleet',
                         vpc=vpc,
                         render_queue=render_queue,
                         deadline_groups=[f'{fleet["name"]}_group'],
+                        security_groups=[worker_fleet_sg],
                         instance_types=instance_type_format_list,
                         worker_machine_image=ami,
                         max_capacity=fleet["max_capacity"],
@@ -376,11 +411,11 @@ class DeadlineStack(Stack):
                         # key_name=key_pair_name,
                         allocation_strategy=fleet["allocation_strategy"],
                         user_data_provider=UserDataProvider(
-                            self, f'{fleet["name"]}_user_data_provider', props=props, os_key=fleet["is_linux"])
+                            self, f'{fleet["name"]}_user_data_provider', props=props, os_key=fleet["is_linux"], user_data_script=user_data_script),
             )
                             
             # Optional: Add additional tags to both spot fleet request and spot instances.
-            Tags.of(spot_fleet_config).add('name', f'Deadline-{fleet["name"]}')
+            Tags.of(spot_fleet_config).add('fleet', f'Deadline-{fleet["name"]}')
             spot_fleet.append(spot_fleet_config)
         
         ConfigureSpotEventPlugin(
