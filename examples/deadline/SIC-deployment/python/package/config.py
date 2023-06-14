@@ -84,5 +84,27 @@ class AppConfig:
             }
         }
 
+        # UBL configuration
+        # UBL support deployment trigger, boolean, switch it to True if needed and fill the rest of the variables
+        self.ubl_support= False
+        # UBL certificate secret arn, string
+        # Rfdk is expecting here an AWS secret binary arn, which you can only create through AWS CLI. Get the certificate zip file and use the following command to create the secret:
+        # aws secretsmanager create-secret --secret-id NameOfTheSecret --secret-binary fileb://pathToCertificateZipFile
+        # where NameOfTheSecret is the desired name of the secret you creating (example: ubl-certificate-secret)
+        # and pathToCertificateZipFile is the path of the secret dependingon your OS, keep fileb:// at the beginning of this path
+        # Then you can get the resulting arn from SecretManager or CLI with this command: aws secretsmanager get-secret-value --secret-id NameOfTheSecret)
+        self.ubl_certificate_secret_arn=""
+        # UBL deadline version,string this is used to select the Thinkbox provided AMI for licence forwarder AMI, use the same version as the one you're deploying
+        # example : "10.2.0.10"
+        self.deadline_version=""
+        # UBL licenses, expecting List[UsageBasedLicense]
+        # for example :
+        # [
+        #     UsageBasedLicense.for_arnold(),
+        #     UsageBasedLicense.for_houdini()
+        # ]
+        # For available static methods (licenses supported), follow this link: https://docs.aws.amazon.com/rfdk/api/latest/python/aws_rfdk.deadline/UsageBasedLicense.html  
+        # you can set a limit for each of them, like so for example : UsageBasedLicense.for_arnold(10)
+        self.ubl_licenses= []
 
 config: AppConfig = AppConfig()

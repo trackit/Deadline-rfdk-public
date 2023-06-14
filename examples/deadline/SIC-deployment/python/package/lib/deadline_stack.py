@@ -48,6 +48,7 @@ from aws_cdk.aws_s3 import (
 )
 
 from aws_rfdk.deadline import (
+    AwsCustomerAgreementAndIpLicenseAcceptance,
     ConfigureSpotEventPlugin,
     InstanceUserDataProvider,
     RenderQueue,
@@ -59,16 +60,26 @@ from aws_rfdk.deadline import (
     SpotEventPluginFleet,
     SpotEventPluginSettings,
     Stage,
+    ThinkboxDockerImages,
     ThinkboxDockerRecipes,
+    UsageBasedLicense,
+    UsageBasedLicensing,
+    VersionQuery
 )
 from aws_rfdk import (
     DistinguishedName,
+    SessionManagerHelper,
     X509CertificatePem,
+)
+from aws_cdk.aws_secretsmanager import(
+    Secret
 )
 from constructs import (
     Construct
 )
-
+from typing import (
+    List
+)
 
 @dataclass
 class DeadlineStackProps(StackProps):
@@ -103,6 +114,14 @@ class DeadlineStackProps(StackProps):
     ad_domain_ip_1: str
     # AD domain ip 2
     ad_domain_ip_2: str
+    # UBL support
+    ubl_support: bool
+    # UBL certificate secret arn
+    ubl_certificate_secret_arn: str
+    # deadline version
+    deadline_version: str
+    # ubl licenses
+    ubl_licenses: List[UsageBasedLicense]
 
 
 # USER DATA Handling
@@ -428,3 +447,57 @@ class DeadlineStack(Stack):
                 enable_resource_tracker=True,
             ),
         )
+        # A secret (in binary form) in SecretsManager that stores the UBL certificates in a .zip file.
+        # This must be in the format `arn:<partition>:secretsmanager:<region>:<accountId>:secret:<secretName>-<6RandomCharacters`
+        if props.ubl_support == True :
+            ubl_certificate_secret_arn: str = props.ubl_certificate_secret_arn
+            deadline_version: str = props.deadline_version
+            
+            # The UBL licenses to use.
+            ubl_licenses: List[UsageBasedLicense] = props.ubl_licenses  
+                
+                    # Set Up UBL Licenses
+            self.setupLicenses(
+                vpc,
+                render_queue,
+                spot_fleet,
+                ubl_licenses=ubl_licenses,
+                ubl_certs_secret_arn=ubl_certificate_secret_arn,
+                images=ThinkboxDockerImages(
+                    self,
+                    'Images',
+                    version=VersionQuery(
+                        self,
+                        'Version',
+                        version=deadline_version
+                    ),
+                    user_aws_customer_agreement_and_ip_license_acceptance=AwsCustomerAgreementAndIpLicenseAcceptance.USER_ACCEPTS_AWS_CUSTOMER_AGREEMENT_AND_IP_LICENSE
+                )
+            )
+        
+    def setupLicenses(self, vpc, render_queue, spot_fleet, ubl_licenses, ubl_certs_secret_arn, images):
+        if ubl_licenses:
+            if not ubl_certs_secret_arn:
+                raise ValueError('UBL certificates secret ARN is required when using UBL but was not specified.')
+            ubl_cert_secret = Secret.from_secret_complete_arn(self, 'ublcertssecret', ubl_certs_secret_arn)
+            ubl_licensing = UsageBasedLicensing(
+                self,
+                'UsageBasedLicensing',
+                vpc=vpc,
+                images=images.for_usage_based_licensing(),
+                licenses=ubl_licenses,
+                render_queue=render_queue,
+                certificate_secret=ubl_cert_secret,
+            )
+
+            # Another optional usage of the SessionManagerHelper that demonstrates how to configure the UBL
+            # construct's ASG for access. Note that this construct also requires you to apply the permissions
+            # to its ASG property.
+            SessionManagerHelper.grant_permissions_to(ubl_licensing.asg)
+            
+            for fleet in spot_fleet:
+                ubl_licensing.grant_port_access(fleet, ubl_licenses)
+        else:
+            ubl_licensing = None
+
+        return ubl_licensing

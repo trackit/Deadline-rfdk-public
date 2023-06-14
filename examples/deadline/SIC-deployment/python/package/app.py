@@ -56,7 +56,11 @@ def main():
         secret_domain_arn=config.secret_domain_arn,
         ad_domain_name=config.ad_domain_name,
         ad_domain_ip_1=config.ad_domain_ip_1,
-        ad_domain_ip_2=config.ad_domain_ip_2
+        ad_domain_ip_2=config.ad_domain_ip_2,
+        ubl_support=config.ubl_support,
+        ubl_certificate_secret_arn=config.ubl_certificate_secret_arn,
+        deadline_version=config.deadline_version,
+        ubl_licenses=config.ubl_licenses
     )
     service = deadline_stack.DeadlineStack(app, 'DeadlineStack', props=sep_props, env=env)
 
