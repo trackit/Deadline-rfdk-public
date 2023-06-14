@@ -118,7 +118,7 @@ class UserDataProvider(InstanceUserDataProvider):
         if self.os_key == 1:
             bucket_key_script="deadline/workers_linux.sh"
         else:
-            bucket_key_script="deadline/workers_windows.sh"
+            bucket_key_script="deadline/workers_windows.ps1"
         license_bucket = Bucket.from_bucket_attributes(
             self,
             'license_bucket',
