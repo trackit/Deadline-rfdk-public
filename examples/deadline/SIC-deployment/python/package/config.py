@@ -61,7 +61,7 @@ class AppConfig:
         # "worker_machine_image" str is the ami name of the worker AMI used (ex: "ami-067d780e98fe3b09f")
         # "max_capacity" int is the number of workers required by the fleet (ex: 1)
         # "allocation_strategy"  is the allocation strategy used by the fleet (ex: SpotFleetAllocationStrategy.CAPACITY_OPTIMIZED) https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-fleet-allocation-strategy.html
-        # "user_data_script" expecting filename (sh for Linux, ps1 for Windows) is an additional script file you uploaded to the worker S3 bucket
+        # "user_data_script" expecting filename string (sh for Linux, ps1 for Windows) is an additional script file you uploaded to the worker S3 bucket, use None if not used.
         self.fleet_config: dict = {
             "fleet1": {
                 "name":"Blender",
@@ -71,7 +71,7 @@ class AppConfig:
                 "worker_machine_image":"",
                 "max_capacity":1,
                 "allocation_strategy":SpotFleetAllocationStrategy.CAPACITY_OPTIMIZED,
-                "user_data_script":""
+                "user_data_script":None
             },
             "fleet2": {
                 "name":"Maya",
@@ -80,7 +80,7 @@ class AppConfig:
                 "worker_machine_image":"",
                 "max_capacity":1,
                 "allocation_strategy":SpotFleetAllocationStrategy.CAPACITY_OPTIMIZED,
-                "user_data_script":""
+                "user_data_script":None
             }
         }
 
