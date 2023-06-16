@@ -132,7 +132,8 @@ class UserDataProvider(InstanceUserDataProvider):
         self.os_key=os_key
         self.user_data_script=user_data_script
         
-    def pre_render_queue_configuration(self, host) -> None:
+    def pre_worker_configuration(self, host) -> None:
+        
         host.user_data.add_commands("echo preRenderQueueConfiguration")
         if self.os_key == 1:
             bucket_key_script="deadline/workers_linux.sh"
@@ -154,7 +155,7 @@ class UserDataProvider(InstanceUserDataProvider):
             bucket_key=f'deadline/{self.user_data_script}'
             )
             host.user_data.add_execute_file_command(file_path=user_data_path)
-    def pre_worker_configuration(self, host) -> None:
+            
         if self.os_key == 1:
             host.user_data.add_commands("/opt/Thinkbox/Deadline10/bin/deadlinecommand -SetIniFileSetting ProxyRoot0 'renderqueue.deadline.internal:4433'")
             host.user_data.add_commands("/opt/Thinkbox/Deadline10/bin/deadlinecommand -SetIniFileSetting ProxyRoot 'renderqueue.deadline.internal:4433'")
