@@ -11,7 +11,8 @@ from aws_cdk import (
 )
 from aws_cdk.aws_ec2 import (
     CfnRoute,
-    CfnVPCPeeringConnection,
+    CfnTransitGateway, 
+    CfnTransitGatewayAttachment,
     IMachineImage,
     InstanceType,
     MachineImage,
@@ -20,6 +21,7 @@ from aws_cdk.aws_ec2 import (
     SecurityGroup,
     SubnetConfiguration,
     SubnetType,
+    RouterType,
     Vpc,
 )
 from aws_cdk.aws_iam import (
@@ -89,6 +91,8 @@ class DeadlineStackProps(StackProps):
     sic_vpc_cidr: str
     # Deadline vpc to create CIDR
     vpc_cidr: str
+    # SIC workstation subnet id
+    sic_workstation_subnet_id: str
     # SIC workstation subnet CIDR
     sic_workstation_subnet_cidr: str
     # S3 bucket for workers
@@ -183,20 +187,40 @@ class DeadlineStack(Stack):
                                     ]
         )
 
-        # create a peering connection
-        peer = CfnVPCPeeringConnection(
+        # 2. Create a Transit Gateway
+        tgw = CfnTransitGateway(
             self,
-            "DeadlineSICPeeringConnection",
+            "DeadlineTG",
+            description="Transit Gateway for Deadline",
+            default_route_table_propagation="enable",
+        )
+        subnet_ids = [subnet.subnet_id for subnet in vpc.private_subnets]
+        # 3. Attach VPCs to the Transit Gateway
+        tgw_attachment_deadline = CfnTransitGatewayAttachment(
+            self,
+            "DeadlineVpcTGWAttachment",
+            transit_gateway_id=tgw.ref,
             vpc_id=vpc.vpc_id,
-            peer_vpc_id=props.sic_vpc_id,
+            subnet_ids=subnet_ids
+        )
+        
+        
+        tgw_attachment_sic = CfnTransitGatewayAttachment(
+            self,
+            "SICVpcTGWAttachment",
+            transit_gateway_id=tgw.ref,
+            vpc_id=props.sic_vpc_id,
+            subnet_ids=[props.sic_workstation_subnet_id]
         )
 
-        # Update route table in rfdk vpc
-        for i, subnet in enumerate(vpc.private_subnets):
-            CfnRoute(self, 'PeerRoute' + str(i),
-                route_table_id=subnet.route_table.route_table_id,
-                destination_cidr_block=props.sic_vpc_cidr,
-                vpc_peering_connection_id=peer.ref
+        # 4. Update Route Tables in the VPCs
+        # For example, for the `vpc`:
+        for subnet in vpc.private_subnets:
+            subnet.add_route(
+                "RouteToSICViaTGW",
+                router_id=tgw_attachment_deadline.ref,
+                router_type=RouterType.TRANSIT_GATEWAY,
+                destination_cidr_block=props.sic_vpc_cidr
             )
       
         # security group for resolver endpoint

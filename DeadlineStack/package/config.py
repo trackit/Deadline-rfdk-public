@@ -44,6 +44,8 @@ class AppConfig:
         self.sic_vpc_cidr: str = ""
         # If using to integrate in SIC (studio in the cloud), the subnet workstation cidr (to allow workstations to connect to rcs server)
         self.sic_workstation_subnet_cidr: str = ""
+        # If using to integrate in SIC (studio in the cloud), the subnet workstation id (for transit gateway attachment configuration)
+        self.sic_workstation_subnet_id: str = ""
         # Bucket for workers script
         self.s3_bucket_workers: str = ""
         # Active directory domain name

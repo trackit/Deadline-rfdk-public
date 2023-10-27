@@ -56,7 +56,8 @@ def main():
         secret_domain_arn=config.secret_domain_arn,
         ad_domain_name=config.ad_domain_name,
         ad_domain_ip_1=config.ad_domain_ip_1,
-        ad_domain_ip_2=config.ad_domain_ip_2
+        ad_domain_ip_2=config.ad_domain_ip_2,
+        sic_workstation_subnet_id=config.sic_workstation_subnet_id
     )
     service = deadline_stack.DeadlineStack(app, 'DeadlineStack', props=sep_props, env=env)
 
