@@ -118,27 +118,31 @@ class UserDataProvider(InstanceUserDataProvider):
         self.user_data_script=user_data_script
         
     def pre_render_queue_configuration(self, host) -> None:
-        host.user_data.add_commands("echo preRenderQueueConfiguration")
-        if self.os_key == 1:
-            bucket_key_script="deadline/workers_linux.sh"
-        else:
-            bucket_key_script="deadline/workers_windows.ps1"
-        license_bucket = Bucket.from_bucket_attributes(
-            self,
-            'license_bucket',
-            bucket_name= self.props.s3_bucket_workers,
+        host.user_data.add_commands("echo 'Entering preRenderQueueConfiguration'")
+    
+        try:
+            license_bucket = Bucket.from_bucket_attributes(
+                self,
+                'license_bucket',
+                bucket_name=self.props.s3_bucket_workers,
             )
-        local_path = host.user_data.add_s3_download_command(
-            bucket=license_bucket,
-            bucket_key=bucket_key_script
-        )
-        host.user_data.add_execute_file_command(file_path=local_path)
-        if self.user_data_script is not None:
-            user_data_path = host.user_data.add_s3_download_command(
-            bucket=license_bucket,
-            bucket_key=f'deadline/{self.user_data_script}'
-            )
-            host.user_data.add_execute_file_command(file_path=user_data_path)
+            host.user_data.add_commands("echo 'Initialized license_bucket'")
+    
+            if self.user_data_script is not None:
+                user_data_path = host.user_data.add_s3_download_command(
+                    bucket=license_bucket,
+                    bucket_key=f'deadline/{self.user_data_script}'
+                )
+                host.user_data.add_commands(f"echo 'Downloaded user data script to {user_data_path}'")
+                host.user_data.add_execute_file_command(file_path=user_data_path)
+                host.user_data.add_commands("echo 'Executed user data script'")
+            else:
+                host.user_data.add_commands("echo 'No user_data_script provided'")
+    
+        except Exception as e:
+            host.user_data.add_commands(f"echo 'Error: {str(e)}'")
+    
+        host.user_data.add_commands("echo 'Exiting preRenderQueueConfiguration'")
     def pre_worker_configuration(self, host) -> None:
         if self.os_key == 1:
             host.user_data.add_commands("/opt/Thinkbox/Deadline10/bin/deadlinecommand -SetIniFileSetting ProxyRoot0 'renderqueue.deadline.internal:4433'")
