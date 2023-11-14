@@ -93,6 +93,8 @@ class DeadlineStackProps(StackProps):
     sic_workstation_subnet_cidr: str
     # S3 bucket for workers
     s3_bucket_workers: str
+    # S3 bucket worker region (verifiy this on S3 service)
+    s3_bucket_workers_region: str
     # Spot instance fleet configuration
     fleet_config: dict
     # Secret domain arn
@@ -127,7 +129,8 @@ class UserDataProvider(InstanceUserDataProvider):
             if self.user_data_script is not None:
                 user_data_path = host.user_data.add_s3_download_command(
                     bucket=license_bucket,
-                    bucket_key=f'deadline/{self.user_data_script}'
+                    bucket_key=f'deadline/{self.user_data_script}',
+                    region=self.props.s3_bucket_workers_region
                 )
                 host.user_data.add_commands(f"echo 'Downloaded user data script to {user_data_path}'")
                 host.user_data.add_execute_file_command(file_path=user_data_path)

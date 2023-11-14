@@ -46,6 +46,8 @@ class AppConfig:
         self.sic_workstation_subnet_cidr: str = ""
         # Bucket for workers script
         self.s3_bucket_workers: str = ""
+        # S3 bucket worker region (verifiy this on S3 service)
+        self.s3_bucket_workers_region: str = ""
         # Active directory domain name
         self.ad_domain_name: str = ""
         # Active directory ip address 1

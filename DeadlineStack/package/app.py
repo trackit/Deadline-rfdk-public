@@ -52,6 +52,7 @@ def main():
         sic_vpc_cidr=config.sic_vpc_cidr,
         sic_workstation_subnet_cidr=config.sic_workstation_subnet_cidr,
         s3_bucket_workers=config.s3_bucket_workers,
+        s3_bucket_workers_region=config.s3_bucket_workers_region,
         fleet_config=config.fleet_config,
         secret_domain_arn=config.secret_domain_arn,
         ad_domain_name=config.ad_domain_name,
