@@ -18,7 +18,7 @@ password=`aws secretsmanager get-secret-value --region $region --secret-id $secr
 sudo yum -y update
 sudo yum -y install sssd realmd krb5-workstation samba-common-tools
 sudo yum install -y cifs-utils
-echo $password | sudo realm join -U admin@$capactivedirectory $activedirectory --computer-ou="OU=RenderWorkers,OU=Computers,OU=ad" --verbose
+echo $password | sudo realm join -U admin@$capactivedirectory $activedirectory --computer-ou="OU=RenderWorkers, OU=ad" --verbose
 
 echo $password | kinit admin@$capactivedirectory
 sudo mkdir /mnt/studio
