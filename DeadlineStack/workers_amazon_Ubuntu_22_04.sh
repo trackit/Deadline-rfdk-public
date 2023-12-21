@@ -22,7 +22,7 @@ rdns = false
 EOF
 
 # Join the instance to the directory
-echo $password | sudo realm join -U $join_account $activedirectory --verbose
+echo $password | sudo realm join -U $join_account $activedirectory --computer-ou="OU=RenderWorkers, OU=ad" --verbose
 
 # Mount the CIFS share
 sudo mkdir /mnt/studio
