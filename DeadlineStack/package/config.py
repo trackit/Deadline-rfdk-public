@@ -38,14 +38,10 @@ class AppConfig:
         self.secret_domain_arn:str = ""
         # Deadline VPC CIDR required (ex:"172.0.0.0/16")
         self.vpc_cidr: str = ""
-        # If using to integrate in SIC (studio in the cloud), the studio vpc id (required for vpc peering)
-        self.sic_vpc_id: str = ""
         # If using to integrate in SIC (studio in the cloud), the studio vpc cidr (generally "10.0.0.0/16") (required for vpc peering)
         self.sic_vpc_cidr: str = ""
         # If using to integrate in SIC (studio in the cloud), the subnet workstation cidr (to allow workstations to connect to rcs server)
         self.sic_workstation_subnet_cidr: str = ""
-        # If using to integrate in SIC (studio in the cloud), the subnet workstation id (for transit gateway attachment configuration)
-        self.sic_workstation_subnet_id: str = ""
         # Bucket for workers script
         self.s3_bucket_workers: str = ""
         # Active directory domain name
@@ -54,7 +50,9 @@ class AppConfig:
         self.ad_domain_ip_1: str = ""
         # Active directory ip address 2
         self.ad_domain_ip_2: str = ""
-        
+        # Existing Transit gateway id
+        self.transit_gateway_id: str = ""
+
         # Spot instance fleet configuration
         # For each fleet, use those parameters:
         # "name" str is name of the fleet, which will be used as prefix for naming ressources as well (ex: "Blender")

@@ -11,7 +11,7 @@ from aws_cdk import (
 )
 from aws_cdk.aws_ec2 import (
     CfnRoute,
-    CfnTransitGateway, 
+    CfnTransitGateway,
     CfnTransitGatewayAttachment,
     IMachineImage,
     InstanceType,
@@ -85,14 +85,10 @@ class DeadlineStackProps(StackProps):
     worker_machine_image: IMachineImage
     # Whether the DeadlineResourceTrackerAccessRole IAM role required by Deadline's Resource Tracker should be created in this CDK app.
     create_resource_tracker_role: bool
-    # SIC vpc id
-    sic_vpc_id: str
     # SIC vpc cidr
     sic_vpc_cidr: str
     # Deadline vpc to create CIDR
     vpc_cidr: str
-    # SIC workstation subnet id
-    sic_workstation_subnet_id: str
     # SIC workstation subnet CIDR
     sic_workstation_subnet_cidr: str
     # S3 bucket for workers
@@ -107,6 +103,8 @@ class DeadlineStackProps(StackProps):
     ad_domain_ip_1: str
     # AD domain ip 2
     ad_domain_ip_2: str
+    # Existing transit gateway id
+    transit_gateway_id: str
 
 
 # USER DATA Handling
@@ -116,10 +114,10 @@ class UserDataProvider(InstanceUserDataProvider):
         self.props=props
         self.os_key=os_key
         self.user_data_script=user_data_script
-        
+
     def pre_render_queue_configuration(self, host) -> None:
         host.user_data.add_commands("echo 'Entering preRenderQueueConfiguration'")
-    
+
         try:
             license_bucket = Bucket.from_bucket_attributes(
                 self,
@@ -127,7 +125,7 @@ class UserDataProvider(InstanceUserDataProvider):
                 bucket_name=self.props.s3_bucket_workers,
             )
             host.user_data.add_commands("echo 'Initialized license_bucket'")
-    
+
             if self.user_data_script is not None:
                 user_data_path = host.user_data.add_s3_download_command(
                     bucket=license_bucket,
@@ -138,10 +136,10 @@ class UserDataProvider(InstanceUserDataProvider):
                 host.user_data.add_commands("echo 'Executed user data script'")
             else:
                 host.user_data.add_commands("echo 'No user_data_script provided'")
-    
+
         except Exception as e:
             host.user_data.add_commands(f"echo 'Error: {str(e)}'")
-    
+
         host.user_data.add_commands("echo 'Exiting preRenderQueueConfiguration'")
     def pre_worker_configuration(self, host) -> None:
         if self.os_key == 1:
@@ -152,7 +150,7 @@ class UserDataProvider(InstanceUserDataProvider):
             host.user_data.add_commands("pushd $DEADLINE_PATH")
             host.user_data.add_commands(".\deadlinecommand.exe -SetIniFileSetting ProxyRoot0 'renderqueue.deadline.internal:4433'")
             host.user_data.add_commands(".\deadlinecommand.exe -SetIniFileSetting ProxyRoot 'renderqueue.deadline.internal:4433'")
-            pass 
+            pass
 
 class DeadlineStack(Stack):
     """
@@ -168,7 +166,7 @@ class DeadlineStack(Stack):
         :param kwargs: Any kwargs that need to be passed on to the parent class.
         """
         super().__init__(scope, stack_id, **kwargs)
-        
+
 
         # Create Cloud9 IAM group
         cloud9IamGroup= Group(self, "Cloud9Admin")
@@ -191,30 +189,16 @@ class DeadlineStack(Stack):
                                     ]
         )
 
-        # 2. Create a Transit Gateway
-        tgw = CfnTransitGateway(
-            self,
-            "DeadlineTG",
-            description="Transit Gateway for Deadline",
-            default_route_table_propagation="enable",
-        )
+
         subnet_ids = [subnet.subnet_id for subnet in vpc.private_subnets]
         # 3. Attach VPCs to the Transit Gateway
+
         tgw_attachment_deadline = CfnTransitGatewayAttachment(
             self,
             "DeadlineVpcTGWAttachment",
-            transit_gateway_id=tgw.ref,
+            transit_gateway_id=props.transit_gateway_id,
             vpc_id=vpc.vpc_id,
             subnet_ids=subnet_ids
-        )
-        
-        
-        tgw_attachment_sic = CfnTransitGatewayAttachment(
-            self,
-            "SICVpcTGWAttachment",
-            transit_gateway_id=tgw.ref,
-            vpc_id=props.sic_vpc_id,
-            subnet_ids=[props.sic_workstation_subnet_id]
         )
 
         # 4. Update Route Tables in the VPCs
@@ -226,7 +210,7 @@ class DeadlineStack(Stack):
                 router_type=RouterType.TRANSIT_GATEWAY,
                 destination_cidr_block=props.sic_vpc_cidr
             )
-      
+
         # security group for resolver endpoint
         worker_resolver_endpoint_sg = SecurityGroup(
                 self,
@@ -235,15 +219,15 @@ class DeadlineStack(Stack):
                 allow_all_outbound=True,
                 description="Deadline_workers_to_ad",
                 security_group_name="deadline_worker_to_ad"
-                
+
             )
         worker_resolver_endpoint_sg.add_ingress_rule(
                 peer=Peer.ipv4(props.vpc_cidr),
                 connection=Port.tcp(53),
                 description="allow workers to connect to studio active directory"
             )
-        
-        
+
+
         # Create resolver endpoint so workers can connect to VPC
         workers_resolver_endpoint = CfnResolverEndpoint(self, "Deadline_workers_to_ad_re",
             direction="OUTBOUND",
@@ -277,7 +261,7 @@ class DeadlineStack(Stack):
             name="Deadline_workers_to_ad"
         )
         # create worker IAM role
-        
+
         fleet_instance_role = Role(
                 self,
                 'FleetRole',
@@ -301,10 +285,10 @@ class DeadlineStack(Stack):
                             )
                         ]
                     )
-                    
+
                 },
             )
-            
+
         recipes = ThinkboxDockerRecipes(
             self,
             'Image',
@@ -390,7 +374,7 @@ class DeadlineStack(Stack):
                 managed_policies= [ManagedPolicy.from_aws_managed_policy_name('AWSThinkboxDeadlineResourceTrackerAccessPolicy')],
                 role_name= 'DeadlineResourceTrackerAccessRole',
             )
-        
+
         # Spot fleet Security group
         worker_fleet_sg = SecurityGroup(
                 self,
@@ -399,14 +383,14 @@ class DeadlineStack(Stack):
                 allow_all_outbound=True,
                 description="Deadline_workers_fleet",
                 security_group_name="deadline_workers_fleet"
-                
+
             )
         worker_fleet_sg.add_ingress_rule(
                 peer=Peer.ipv4(props.sic_vpc_cidr),
                 connection=Port.all_traffic(),
                 description="allow fleet workers to access licence server or workstation to be able to check worker logs"
             )
-        
+
         # iterate through props.fleet_config dict
         spot_fleet=[];
         for i, fleet in props.fleet_config.items():
@@ -441,11 +425,11 @@ class DeadlineStack(Stack):
                         user_data_provider=UserDataProvider(
                             self, f'{fleet["name"]}_user_data_provider', props=props, os_key=fleet["is_linux"], user_data_script=user_data_script),
             )
-                            
+
             # Optional: Add additional tags to both spot fleet request and spot instances.
             Tags.of(spot_fleet_config).add('fleet', f'Deadline-{fleet["name"]}')
             spot_fleet.append(spot_fleet_config)
-        
+
         ConfigureSpotEventPlugin(
             self,
             'ConfigureSpotEventPlugin',
