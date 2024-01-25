@@ -204,12 +204,16 @@ class DeadlineStack(Stack):
         # 4. Update Route Tables in the VPCs
         # For example, for the `vpc`:
         for subnet in vpc.private_subnets:
-            subnet.add_route(
-                "RouteToSICViaTGW",
-                router_id=tgw_attachment_deadline.ref,
-                router_type=RouterType.TRANSIT_GATEWAY,
-                destination_cidr_block=props.sic_vpc_cidr
+            route = CfnRoute(
+                self,
+                f"RouteFor{subnet.node.id}",
+                route_table_id=subnet.route_table.route_table_id,
+                destination_cidr_block=props.sic_vpc_cidr,
+                transit_gateway_id=props.transit_gateway_id
             )
+
+            # Add dependency on Transit Gateway Attachment
+            route.add_depends_on(tgw_attachment_deadline)
 
         # security group for resolver endpoint
         worker_resolver_endpoint_sg = SecurityGroup(
