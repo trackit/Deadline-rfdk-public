@@ -89,7 +89,7 @@ class AppConfig:
         self.ubl_support= False
         # UBL certificate secret arn, string
         # Rfdk is expecting here an AWS secret binary arn, which you can only create through AWS CLI. You can see it related doc at https://docs.thinkboxsoftware.com/products/deadline/10.1/1_User%20Manual/manual/licensing-usage-based.html, Get the certificate zip file and use the following command to create the secret:
-        # aws secretsmanager create-secret --secret-id NameOfTheSecret --secret-binary fileb://pathToCertificateZipFile
+        # aws secretsmanager create-secret --name NameOfTheSecret --secret-binary fileb://pathToCertificateZipFile
         # where NameOfTheSecret is the desired name of the secret you creating (example: ubl-certificate-secret)
         # and pathToCertificateZipFile is the path of the secret dependingon your OS, keep fileb:// at the beginning of this path
         # Then you can get the resulting arn from SecretManager or CLI with this command: aws secretsmanager get-secret-value --secret-id NameOfTheSecret)
