@@ -52,7 +52,7 @@ class AppConfig:
         self.ad_domain_ip_1: str = ""
         # Active directory ip address 2
         self.ad_domain_ip_2: str = ""
-        
+
         # Spot instance fleet configuration
         # For each fleet, use those parameters:
         # "name" str is name of the fleet, which will be used as prefix for naming ressources as well (ex: "Blender")
@@ -88,7 +88,7 @@ class AppConfig:
         # UBL support deployment trigger, boolean, switch it to True if needed and fill the rest of the variables
         self.ubl_support= False
         # UBL certificate secret arn, string
-        # Rfdk is expecting here an AWS secret binary arn, which you can only create through AWS CLI. Get the certificate zip file and use the following command to create the secret:
+        # Rfdk is expecting here an AWS secret binary arn, which you can only create through AWS CLI. You can see it related doc at https://docs.thinkboxsoftware.com/products/deadline/10.1/1_User%20Manual/manual/licensing-usage-based.html, Get the certificate zip file and use the following command to create the secret:
         # aws secretsmanager create-secret --secret-id NameOfTheSecret --secret-binary fileb://pathToCertificateZipFile
         # where NameOfTheSecret is the desired name of the secret you creating (example: ubl-certificate-secret)
         # and pathToCertificateZipFile is the path of the secret dependingon your OS, keep fileb:// at the beginning of this path
@@ -103,7 +103,7 @@ class AppConfig:
         #     UsageBasedLicense.for_arnold(),
         #     UsageBasedLicense.for_houdini()
         # ]
-        # For available static methods (licenses supported), follow this link: https://docs.aws.amazon.com/rfdk/api/latest/python/aws_rfdk.deadline/UsageBasedLicense.html  
+        # For available static methods (licenses supported), follow this link: https://docs.aws.amazon.com/rfdk/api/latest/python/aws_rfdk.deadline/UsageBasedLicense.html
         # you can set a limit for each of them, like so for example : UsageBasedLicense.for_arnold(10)
         self.ubl_licenses= []
 
