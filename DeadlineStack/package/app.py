@@ -41,23 +41,18 @@ def main():
         account=os.environ.get('CDK_DEPLOY_ACCOUNT', os.environ.get('CDK_DEFAULT_ACCOUNT')),
         region=os.environ.get('CDK_DEPLOY_REGION', os.environ.get('CDK_DEFAULT_REGION'))
     )
-    
+
     sep_props = deadline_stack.DeadlineStackProps(
         aws_region=config.aws_region,
         docker_recipes_stage_path=os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir, 'stage'),
         worker_machine_image=MachineImage.generic_linux(config.deadline_client_linux_ami_map),
         create_resource_tracker_role=config.create_resource_tracker_role,
-        sic_vpc_id=config.sic_vpc_id,
         vpc_cidr=config.vpc_cidr,
-        sic_vpc_cidr=config.sic_vpc_cidr,
-        sic_workstation_subnet_cidr=config.sic_workstation_subnet_cidr,
         s3_bucket_workers=config.s3_bucket_workers,
         s3_bucket_workers_region=config.s3_bucket_workers_region,
         fleet_config=config.fleet_config,
         secret_domain_arn=config.secret_domain_arn,
-        ad_domain_name=config.ad_domain_name,
-        ad_domain_ip_1=config.ad_domain_ip_1,
-        ad_domain_ip_2=config.ad_domain_ip_2
+        custom_ami_id=config.custom_ami_id
     )
     service = deadline_stack.DeadlineStack(app, 'DeadlineStack', props=sep_props, env=env)
 
