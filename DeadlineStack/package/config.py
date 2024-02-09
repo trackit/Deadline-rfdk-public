@@ -44,6 +44,8 @@ class AppConfig:
         self.s3_bucket_workers_region: str = ""
         # EC2 test instance AMI
         self.custom_ami_id: str = ""
+        # EC2 test instance key pair
+        self.ec2_key_pair_name: str = ""
 
         # Spot instance fleet configuration
         # For each fleet, use those parameters:

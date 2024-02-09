@@ -98,6 +98,8 @@ class DeadlineStackProps(StackProps):
     secret_domain_arn: str
     # Custom AMI for Test EC2
     custom_ami_id: str
+    # Keypair for the test EC2 instance
+    ec2_key_pair_name: str
 
 
 
@@ -385,6 +387,7 @@ class DeadlineStack(Stack):
             vpc_subnets={"subnet_type": SubnetType.PRIVATE_WITH_EGRESS},
             security_group=ssm_sg,  # Ensure this SG allows necessary traffic for SSM
             role=ssm_role,  # Attach the IAM role for SSM
+            key_name=props.ec2_key_pair_name
         )
 
         # Adding user data to connect to the repository
