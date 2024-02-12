@@ -11,6 +11,7 @@ activedirectory=""
 AD_DNS_1=""
 # Active directory dns IP 2
 AD_DNS_2=""
+capactivedirectory=${activedirectory^^}
 sudo yum -y install python
 password=$(aws secretsmanager get-secret-value --region $region --secret-id $secret | python3 -c "import sys, json; obj=json.load(sys.stdin)['SecretString'];print(json.loads(obj)['password'])")
 
