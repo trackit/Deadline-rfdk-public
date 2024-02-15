@@ -24,7 +24,7 @@ echo $password | sudo realm join -U admin@$capactivedirectory $activedirectory -
 
 echo $password | kinit admin@$capactivedirectory
 sudo mkdir /mnt/studio
-sudo mount -t cifs -o vers=3.0,sec=ntlmsspi,user=Admin@$capactivedirectory,password=$password //$drive/share /mnt/studio
+sudo mount -t cifs -o vers=3.0,sec=ntlmsspi,user=Admin@$capactivedirectory,password=$password,file_mode=0666,dir_mode=0777 //$drive/share /mnt/studio
 
 /opt/Thinkbox/Deadline10/bin/deadlinecommand.exe -SetIniFileSetting ProxyRoot0 "renderqueue.deadline.internal:4433"
 /opt/Thinkbox/Deadline10/bin/deadlinecommand.exe -SetIniFileSetting ProxyRoot "renderqueue.deadline.internal:4433"
