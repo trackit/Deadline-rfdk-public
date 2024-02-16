@@ -51,7 +51,6 @@ def main():
         s3_bucket_workers=config.s3_bucket_workers,
         s3_bucket_workers_region=config.s3_bucket_workers_region,
         fleet_config=config.fleet_config,
-        secret_domain_arn=config.secret_domain_arn,
         custom_ami_id=config.custom_ami_id,
         ec2_key_pair_name=config.ec2_key_pair_name
     )

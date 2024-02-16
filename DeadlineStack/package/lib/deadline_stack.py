@@ -94,8 +94,6 @@ class DeadlineStackProps(StackProps):
     s3_bucket_workers_region: str
     # Spot instance fleet configuration
     fleet_config: dict
-    # Secret domain arn
-    secret_domain_arn: str
     # Custom AMI for Test EC2
     custom_ami_id: str
     # Keypair for the test EC2 instance
@@ -218,14 +216,6 @@ class DeadlineStack(Stack):
                                 resources=["arn:aws:s3:::"+props.s3_bucket_workers+"/*"]
                             )
                         ]
-                    ),
-                    "read_ad_credentials": PolicyDocument(
-                        statements=[
-                            PolicyStatement(
-                                actions=["secretsmanager:GetSecretValue"],
-                                resources=[props.secret_domain_arn]
-                            )
-                        ]
                     )
                 },
             )
@@ -304,7 +294,7 @@ class DeadlineStack(Stack):
                 internal_protocol=ApplicationProtocol.HTTPS,
             ),
         )
-        # render_queue.connections.allow_default_port_from(Peer.ipv4(props.sic_workstation_subnet_cidr))
+         render_queue.connections.allow_default_port_from(Peer.ipv4(props.vpc_cidr))
 
         if props.create_resource_tracker_role:
             # Creates the Resource Tracker Access role. This role is required to exist in your account so the resource tracker will work properly
@@ -377,24 +367,22 @@ class DeadlineStack(Stack):
             ),
         )
 
-         EC2 Instance Deployment
-        instance = Instance(
+        # Security Group for EC2 Instance to communicate with AWS Systems Manager
+        ssm_sg = SecurityGroup(
             self,
-            "RepositoryAccessInstance",
-            instance_type=InstanceType.of(InstanceClass.COMPUTE5, InstanceSize.LARGE),  # c5.large
-            machine_image=MachineImage.generic_windows({props.aws_region: props.custom_ami_id}),  # Custom Windows AMI with Deadline client
+            "SSMSecurityGroup",
             vpc=vpc,
-            vpc_subnets={"subnet_type": SubnetType.PRIVATE_WITH_EGRESS},
-            security_group=ssm_sg,  # Ensure this SG allows necessary traffic for SSM
-            role=ssm_role,  # Attach the IAM role for SSM
-            key_name=props.ec2_key_pair_name
+            description="Security group for EC2 instance to allow communication with AWS Systems Manager",
+            allow_all_outbound=True  # Allows all outbound traffic by default
         )
 
-        # Adding user data to connect to the repository
-        instance.user_data.add_commands(
-            "echo 'Configuring instance to access Deadline Repository'",
-            # Add commands here to configure the instance to connect to the repository
+        # Adding ingress rule to allow RDP access from any source
+        ssm_sg.add_ingress_rule(
+            peer=Peer.any_ipv4(),
+            connection=Port.tcp(3389),
+            description="Allow RDP access from any source"
         )
+
 
         # IAM Role for EC2 Fleet Connect through AWS Systems Manager
         ssm_role = Role(
@@ -407,30 +395,36 @@ class DeadlineStack(Stack):
             ]
         )
 
-        # Security Group for EC2 Instance to communicate with AWS Systems Manager
-        ssm_sg = SecurityGroup(
-            self,
-            "SSMSecurityGroup",
-            vpc=vpc,
-            description="Security group for EC2 instance to allow communication with AWS Systems Manager",
-            allow_all_outbound=True  # Allows all outbound traffic by default
-        )
-
-        # Optionally, restrict outbound traffic to only AWS SSM endpoints (port 443)
-        ssm_sg.add_egress_rule(
-            peer=Peer.any_ipv4(),  # or use specific CIDR blocks for AWS endpoints
-            connection=Port.tcp(443),
-            description="Allow outbound HTTPS to SSM endpoints"
-        )
 
         # IAM policy to allow EC2 instance to access the S3 bucket
-        s3_access_policy = iam.PolicyStatement(
+        s3_access_policy = PolicyStatement(
             actions=["s3:GetObject"],
             resources=[f"arn:aws:s3:::{props.s3_bucket_workers}/*"]
         )
 
         # Attach the policy to the EC2 instance role
-        ec2_instance_role.add_to_policy(s3_access_policy)
+        ssm_role.add_to_policy(s3_access_policy)
+
+        # EC2 Instance Deployment
+        instance = Instance(
+            self,
+            "RepositoryAccessInstance",
+            instance_type=InstanceType.of(InstanceClass.COMPUTE5, InstanceSize.LARGE),  # c5.large
+            machine_image=MachineImage.generic_windows({props.aws_region: props.custom_ami_id}),  # Custom Windows AMI with Deadline client
+            vpc=vpc,
+            vpc_subnets={"subnet_type": SubnetType.PUBLIC},  # Deploy in a public subnet
+            security_group=ssm_sg,
+            role=ssm_role,
+            key_name=props.ec2_key_pair_name
+        )
+
+
+        # Adding user data to connect to the repository
+        instance.user_data.add_commands(
+            "echo 'Configuring instance to access Deadline Repository'",
+            # Add commands here to configure the instance to connect to the repository
+        )
+
 
         # Modify user data to download the certificate from S3
         instance.user_data.add_commands(

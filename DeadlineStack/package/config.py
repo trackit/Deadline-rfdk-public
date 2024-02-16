@@ -34,8 +34,6 @@ class AppConfig:
         self.create_resource_tracker_role: bool = True
         # AWS region deadline is deployed into (ex: "us-west-2")
         self.aws_region:str = ""
-        # Active directory secret arn ex: arn:aws:secretsmanager:us-west-2:xxxxxx:secret:StudioADAdminAccountCredentials-xxxxx
-        self.secret_domain_arn:str = ""
         # Deadline VPC CIDR required (ex:"172.0.0.0/16")
         self.vpc_cidr: str = ""
         # Bucket for workers script
