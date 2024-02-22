@@ -294,7 +294,7 @@ class DeadlineStack(Stack):
                 internal_protocol=ApplicationProtocol.HTTPS,
             ),
         )
-         render_queue.connections.allow_default_port_from(Peer.ipv4(props.vpc_cidr))
+        render_queue.connections.allow_default_port_from(Peer.ipv4(props.vpc_cidr))
 
         if props.create_resource_tracker_role:
             # Creates the Resource Tracker Access role. This role is required to exist in your account so the resource tracker will work properly
