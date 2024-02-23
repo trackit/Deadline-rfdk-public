@@ -1,15 +1,9 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-from os import path
 from aws_cdk import aws_ecs as ecs
 from aws_cdk.aws_ecr import Repository as EcrRepository
 from aws_cdk.aws_ecr_assets import DockerImageAsset
-# from aws_cdk.aws_ecr_deployment import (
-#     DockerImageName,
-#     Source,
-#     TagParameter,
-# )
 
 from dataclasses import dataclass
 from aws_cdk import (
@@ -20,8 +14,6 @@ from aws_cdk import (
     Tags,
 )
 from aws_cdk.aws_ec2 import (
-    CfnRoute,
-    CfnVPCPeeringConnection,
     IMachineImage,
     Instance,
     InstanceClass,
@@ -48,12 +40,6 @@ from aws_cdk.aws_elasticloadbalancingv2 import (
 )
 from aws_cdk.aws_route53 import (
     PrivateHostedZone,
-)
-
-from aws_cdk.aws_route53resolver import (
-    CfnResolverEndpoint,
-    CfnResolverRule,
-    CfnResolverRuleAssociation,
 )
 
 from aws_cdk.aws_s3 import (
@@ -203,52 +189,72 @@ class DeadlineStack(Stack):
                                                       name="render-")
                                   ]
         )
-        
+
+        #### Sfmt ####
 
         # Create an ECR repository
         ecr_repository = EcrRepository(
             self,
-            'Spotfleet-Mgmt-UI-ECR-Repository',
-            image_scan_on_push=True,  # Enable image scanning on push
-            removal_policy=RemovalPolicy.DESTROY  # Adjust the removal policy as needed
+            'Spotfleet-Mgmt-UI-ECR',
+            repository_name='spotfleet-mgmt-ui',
         )
 
         # Create an asset from the spotfleet-mgmt-ui directory
         asset = DockerImageAsset(
             self,
-            "sfmt",
+            "sfmt-image",
             directory="./spotfleet-mgmt-ui",
         )
-
-        # Deploy the asset to the ECR repository
-
-        # ecr_repository.grant_pull_push(asset.grant_principal)
-        # asset.repository = ecr_repository
-
-        # ecr_repository.on_image_scan_completed(
-        #     "ImageScanComplete").add_target(asset)
-
-        # docker_image_asset_hash = asset.asset_hash
-        # destination_image_name = f"{ecr_repository.repository_uri}:{docker_image_asset_hash}"
-
-        # ecr_deploy = ecr_deployment.ECRDeployment(
-        #     self,
-        #     "EcrDeployment",
-        #     src=ecr_deployment.DockerImageName(
-        #         self.docker_image_asset.image_uri),
-        #     dest=ecr_deployment.DockerImageName(destination_image_name),
-        # )
 
         # Create an ECS cluster
         ecs_cluster = ecs.Cluster(
             self,
             'Spotfleet-Mgmt-UI-ECS-Cluster',
+            cluster_name='spotfleet-mgmt-ui',
+            enable_fargate_capacity_providers=True,
             vpc=vpc
         )
 
-        # Create an ECS task definition
-        # This task must run the image present in the ECR repo
+        # Create task IAM role
+        ecs_task_role = Role(
+            self,
+            'TaskRole',
+            role_name='deadline-ecs-task-access-ecr',
+            assumed_by=ServicePrincipal('ecs-tasks.amazonaws.com'),
+            managed_policies=[
+                ManagedPolicy.from_aws_managed_policy_name(
+                    'AmazonEC2ContainerRegistryReadOnly'),
+                ManagedPolicy.from_aws_managed_policy_name(
+                    'service-role/AmazonECSTaskExecutionRolePolicy')
+            ]
+        )
+        # Create task execution IAM role
+        ecs_task_execution_role = Role(
+            self,
+            'TaskExecutionRole',
+            role_name='deadline-ecs-task-execution-access-ecr',
+            assumed_by=ServicePrincipal('ecs-tasks.amazonaws.com'),
+            managed_policies=[
+                ManagedPolicy.from_aws_managed_policy_name(
+                    'AmazonEC2ContainerRegistryReadOnly'),
+                ManagedPolicy.from_aws_managed_policy_name(
+                    'service-role/AmazonECSTaskExecutionRolePolicy')
+            ]
+        )
 
+        # Create an ECS task definition
+        task_definition = ecs.FargateTaskDefinition(
+            self, "run-sfmt-ui",
+            task_role=ecs_task_role,
+            execution_role=ecs_task_execution_role,
+        )
+        container = task_definition.add_container(
+            "sfmf-ui-container",
+            image=ecs.ContainerImage.from_ecr_repository(
+                ecr_repository, asset.image_uri),
+        )
+
+        #### Sfmt end ####
 
         # security group for resolver endpoint
         worker_resolver_endpoint_sg = SecurityGroup(
