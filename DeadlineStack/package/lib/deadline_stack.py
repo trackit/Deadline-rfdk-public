@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from aws_cdk import aws_ecs as ecs
-from aws_cdk.aws_ecr import Repository as EcrRepository
+from aws_cdk import aws_ecr as ecr
 from aws_cdk.aws_ecr_assets import DockerImageAsset
 
 from dataclasses import dataclass
@@ -192,20 +192,6 @@ class DeadlineStack(Stack):
 
         #### Sfmt ####
 
-        # Create an ECR repository
-        ecr_repository = EcrRepository(
-            self,
-            'Spotfleet-Mgmt-UI-ECR',
-            repository_name='spotfleet-mgmt-ui',
-        )
-
-        # Create an asset from the spotfleet-mgmt-ui directory
-        asset = DockerImageAsset(
-            self,
-            "sfmt-image",
-            directory="./spotfleet-mgmt-ui",
-        )
-
         # Create an ECS cluster
         ecs_cluster = ecs.Cluster(
             self,
@@ -242,6 +228,10 @@ class DeadlineStack(Stack):
             ]
         )
 
+        # Reference ECR repository
+        ecr_repository = ecr.Repository.from_repository_name(
+            self, "spotfleet-mgmt-ui-repo", repository_name="spotfleet-mgmt-ui")
+
         # Create an ECS task definition
         task_definition = ecs.FargateTaskDefinition(
             self, "run-sfmt-ui",
@@ -249,9 +239,10 @@ class DeadlineStack(Stack):
             execution_role=ecs_task_execution_role,
         )
         container = task_definition.add_container(
-            "sfmf-ui-container",
+            "sfmt-ui-container",
             image=ecs.ContainerImage.from_ecr_repository(
-                ecr_repository, asset.image_uri),
+                ecr_repository,
+                "latest"),
         )
 
         #### Sfmt end ####

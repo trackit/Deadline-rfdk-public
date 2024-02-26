@@ -34,13 +34,19 @@ These instructions assume that your working directory is `examples/deadline/SIC-
     npx --package=aws-rfdk@${RFDK_VERSION} stage-deadline --output stage ${RFDK_DEADLINE_VERSION}
     ```
 
-5. Deploy all the stacks:
+5. Deploy ECR repository and push Spotfleet Mgmt UI related Docker image to it. Run the script like this:
+
+    ```bash
+    ./deploy_spotfleet_mgmt_ui.sh -a YOUR_AWS_ACCOUNT_ID -r YOUR_AWS_REGION -p YOUR_AWS_PROFILE
+    ```
+
+6. Deploy all the stacks:
 
     ```bash
     cdk deploy "*"
     ```
 
-6. Once you are finished with the sample app, you can tear it down by running:
+7. Once you are finished with the sample app, you can tear it down by running:
 
     **Note:** Any resources created by the Spot Event Plugin will not be deleted with `cdk destroy`. Make sure that all such resources (e.g. Spot Fleet Request or Fleet Instances) are cleaned up, before destroying the stacks. Disable the Spot Event Plugin by setting 'state' property to 'SpotEventPluginState.DISABLED' or via Deadline Monitor, ensure you shutdown all Pulse instances and then terminate any Spot Fleet Requests in the AWS EC2 Instance Console.
 
