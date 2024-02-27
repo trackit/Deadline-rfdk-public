@@ -4,6 +4,7 @@
 from aws_cdk import aws_ecs as ecs
 from aws_cdk import aws_ecr as ecr
 from aws_cdk.aws_ecr_assets import DockerImageAsset
+from aws_cdk import aws_servicediscovery as sd
 
 from dataclasses import dataclass
 from aws_cdk import (
@@ -214,6 +215,7 @@ class DeadlineStack(Stack):
                     'service-role/AmazonECSTaskExecutionRolePolicy')
             ]
         )
+
         # Create task execution IAM role
         ecs_task_execution_role = Role(
             self,
@@ -243,6 +245,47 @@ class DeadlineStack(Stack):
             image=ecs.ContainerImage.from_ecr_repository(
                 ecr_repository,
                 "latest"),
+        )
+        container.add_port_mappings(ecs.PortMapping(container_port=4242))
+
+        # Create a private DNS namespace for the Deadline SFMT UI application
+        namespace = sd.PrivateDnsNamespace(
+            self, "DeadlineSfmtUiNamespace",
+            name="deadlinesfmtui.internal",
+            vpc=vpc
+        )
+
+        # Create a service discovery service for the Deadline SFMT UI application
+        discovery_service = namespace.create_service(
+            "DeadlineSfmtMgmtUiService",
+            name="sfmt-mgmt-ui-service"
+        )
+
+        # ecs_service = ecs.FargateService(
+        #     self, "DeadlineSfmtMgmtUiFargateService",
+        #     service_name="sfmt-mgmt-ui-fargate-service",
+        #     cluster=ecs_cluster,
+        #     task_definition=task_definition,
+        #     cloud_map_options=ecs.CloudMapOptions(
+        #         cloud_map_namespace=discovery_service.namespace,
+        #         name=discovery_service.service_name
+        #     )
+        # )
+
+        # Security Group for EC2 Instance to communicate with AWS Systems Manager
+        task_definition_sg = SecurityGroup(
+            self,
+            "TaskDefSecurityGroup",
+            vpc=vpc,
+            description="Security group for EC2 instance to allow communication with AWS Systems Manager",
+            allow_all_outbound=True  # Allows all outbound traffic by default
+        )
+
+        # Adding ingress rule to allow RDP access from any source
+        task_definition_sg.add_ingress_rule(
+            peer=Peer.ipv4("10.2.0.0/16"),
+            connection=Port.tcp(4242),
+            description="Allow inbound traffic from VPC CIDR on port 4242"
         )
 
         #### Sfmt end ####
