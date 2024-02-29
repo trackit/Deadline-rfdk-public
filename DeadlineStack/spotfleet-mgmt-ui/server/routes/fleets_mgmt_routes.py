@@ -7,26 +7,26 @@ router = APIRouter(
 )
 
 
-@router.get("/")
+@router.get("/", status_code=200)
 async def get_fleets():
     return {"body": []}
 
 
-@router.get("/{fleet_id}")
+@router.get("/{fleet_id}", status_code=200)
 async def get_fleet(fleet_id: str):
     return {"body": fleet_id}
 
 
-@router.post("/")
+@router.post("/", status_code=200)
 async def create_fleet():
     return {"body": "new"}
 
 
-@router.put("/{fleet_id}")
+@router.put("/{fleet_id}", status_code=200)
 async def update_fleet(fleet_id: str):
     return {"body": f"{fleet_id} updated"}
 
 
-@router.delete("/{fleet_id}")
+@router.delete("/{fleet_id}", status_code=200)
 async def delete_fleet(fleet_id: str):
     return {"body": f"{fleet_id} deleted"}
