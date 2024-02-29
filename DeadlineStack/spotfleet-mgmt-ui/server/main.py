@@ -17,6 +17,7 @@ app.add_middleware(
 async def serve_client():
     return FileResponse("../client/build/index.html")
 
+
 @app.get("/healthcheck")
 async def health_check():
     return JSONResponse(status_code=200, content={"status": "OK"})
