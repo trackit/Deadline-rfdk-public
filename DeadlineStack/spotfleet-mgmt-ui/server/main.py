@@ -3,6 +3,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, FileResponse
 
+from fleets_mgmt_routes.fleets_mgmt import router as fleets_mgmt_router
+
 app = FastAPI()
 
 
@@ -14,6 +16,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.include_router(fleets_mgmt_router)
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
 
 app.mount("/", StaticFiles(directory="build", html=True), name="static")
 
