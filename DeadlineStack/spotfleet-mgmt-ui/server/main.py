@@ -1,7 +1,7 @@
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
+from fastapi import APIRouter, FastAPI
+from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, FileResponse
+
 
 app = FastAPI()
 
@@ -15,9 +15,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/", StaticFiles(directory="build", html=True), name="static")
+router= APIRouter()
 
-
-@app.get("/", response_class=HTMLResponse)
+@router.get("/", response_class=HTMLResponse)
 async def serve_client():
     return FileResponse("build/index.html")
+
+app.include_router(
+    router,
+    prefix="/api/v1",
+    tags=["api/v1"],
+    dependencies=[],
+    responses={},
+)
+
