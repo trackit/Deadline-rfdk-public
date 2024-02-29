@@ -4,6 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from routes.fleets_mgmt_routes import router as fleets_mgmt_router
 
+from .routes.fleets_mgmt_routes import router as fleets_mgmt_router
+
 app = FastAPI()
 
 app.add_middleware(
@@ -14,6 +16,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(fleets_mgmt_router)
 
 router= APIRouter()
 
