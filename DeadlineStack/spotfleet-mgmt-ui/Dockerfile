@@ -11,7 +11,9 @@ RUN cd client && npm run build
 FROM tiangolo/uvicorn-gunicorn-fastapi:python3.10 as production
 WORKDIR /app
 COPY --from=build /app/client/build /app/build
-COPY server/main.py /app/main.py
+COPY server/. /app/
+RUN pip install -r requirements.txt
+
 
 # Expose port 4242 for FastAPI app
 EXPOSE 4242

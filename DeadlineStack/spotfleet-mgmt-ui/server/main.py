@@ -1,3 +1,5 @@
+from fastapi import APIRouter, FastAPI
+from fastapi.responses import FileResponse, HTMLResponse
 from fastapi import FastAPI
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,9 +15,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/", response_class=HTMLResponse)
+router= APIRouter()
+
+@router.get("/", response_class=HTMLResponse)
 async def serve_client():
-    return FileResponse("../client/build/index.html")
+    return FileResponse("build/index.html")
+
+app.include_router(
+    router,
+    prefix="/api/v1",
+    tags=["api/v1"],
+    dependencies=[],
+    responses={},
+)
 
 
 @app.get("/healthcheck")
