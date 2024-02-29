@@ -1,5 +1,4 @@
 from fastapi import APIRouter
-from ..services.deadline_config_services import DeadlineConfigService
 
 router = APIRouter(
     prefix="/fleets",
@@ -20,13 +19,11 @@ async def get_fleet(fleet_id: str):
 
 @router.post("/", status_code=200)
 async def create_fleet():
-    DeadlineConfigService.create_backup()
     return {"body": "new"}
 
 
 @router.put("/{fleet_id}", status_code=200)
 async def update_fleet(fleet_id: str):
-    DeadlineConfigService.create_backup()
     return {"body": f"{fleet_id} updated"}
 
 
