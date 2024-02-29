@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from routes.fleets_mgmt_routes import router as fleets_mgmt_router
 
-from .routes.fleets_mgmt_routes import router as fleets_mgmt_router
+from routes.fleets_mgmt_routes import router as fleets_mgmt_router
 
 app = FastAPI()
 
