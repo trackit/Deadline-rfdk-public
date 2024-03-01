@@ -1,11 +1,11 @@
 import shutil
 
 
-class DeadlineConfigProxyService:
+class Backup:
 
-    def create_backup(self, original_path: str, output_path: str):
+    def create(self, original_path: str, output_path: str):
         try:
             shutil.copy(original_path, output_path)
-            return True
+            return output_path
         except Exception as e:
             return False
