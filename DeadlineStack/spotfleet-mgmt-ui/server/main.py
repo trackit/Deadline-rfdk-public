@@ -1,6 +1,9 @@
 from fastapi import FastAPI, APIRouter
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+
+from routes.fleets import router as fleets_router
+
 app = FastAPI()
 
 app.add_middleware(
@@ -12,9 +15,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-router= APIRouter()
+app.include_router(fleets_router)
 
-@router.get("/", response_class=HTMLResponse)
+router = APIRouter()
+
+@app.get("/", response_class=HTMLResponse)
 async def serve_client():
     return FileResponse("build/index.html")
 
