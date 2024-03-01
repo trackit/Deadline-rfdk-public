@@ -3,6 +3,8 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from routes.fleets import router as fleets_router
 
+API_PREFIX = "/api/v1"
+
 app = FastAPI()
 
 app.add_middleware(
@@ -14,7 +16,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 router = APIRouter(
-    prefix="/api/v1",
+    prefix=API_PREFIX,
 )
 
 @router.get("/", response_class=HTMLResponse)
@@ -29,5 +31,5 @@ app.include_router(router)
 
 app.include_router(
     fleets_router, 
-    prefix="/api/v1",
+    prefix=API_PREFIX,
 )
