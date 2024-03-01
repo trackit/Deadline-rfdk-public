@@ -2,7 +2,7 @@ from fastapi import FastAPI, APIRouter
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from routes.fleets_mgmt_routes import router as fleets_mgmt_router
+from routes.fleets import router as fleets_router
 
 from routes.fleets_mgmt_routes import router as fleets_mgmt_router
 
@@ -17,12 +17,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(fleets_mgmt_router)
+app.include_router(fleets_router)
 
-router= APIRouter()
-
-@router.get("/", response_class=HTMLResponse)
-app.include_router(fleets_mgmt_router)
+router = APIRouter()
 
 @app.get("/", response_class=HTMLResponse)
 async def serve_client():
