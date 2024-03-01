@@ -19,7 +19,7 @@ app.include_router(fleets_router)
 
 router = APIRouter()
 
-@app.get("/", response_class=HTMLResponse)
+@router.get("/", response_class=HTMLResponse)
 async def serve_client():
     return FileResponse("build/index.html")
 
