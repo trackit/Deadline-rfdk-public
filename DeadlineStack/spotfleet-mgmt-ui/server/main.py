@@ -1,10 +1,7 @@
-from fastapi import APIRouter, FastAPI
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi import FastAPI
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-
-
 app = FastAPI()
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -28,4 +25,9 @@ app.include_router(
     dependencies=[],
     responses={},
 )
+
+
+@app.get("/healthcheck")
+async def health_check():
+    return JSONResponse(status_code=200, content={"status": "OK"})
 
