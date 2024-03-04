@@ -31,3 +31,24 @@ This command will start the application, and you can access it in your web brows
 ## Access the Application
 
 Open your web browser and go to http://localhost:4242 to access the Deadline SFMT application.
+
+## Test the server
+
+Ensure you have pytest installed. If not, install it using the following command:
+
+```bash
+pip install pytest
+```
+
+Run all the tests using pytest:
+
+```bash
+pytest
+```
+
+If you have specific tests you want to run, you can do so by specifying the file or folder after the pytest command. For example:
+
+```bash
+pytest server/services/tests/test_example.py
+```
+This will only run the tests defined in the test_example.py file.
