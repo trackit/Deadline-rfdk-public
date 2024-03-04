@@ -18,9 +18,9 @@ class LinuxFilter(BaseFilter):
 
 
 class AMIService:
-    def __init__(self, profile_name: str, region_name: str):
+    def __init__(self, profile_name: str):
         self.session = Session(profile_name=profile_name)
-        self.ec2 = self.session.client('ec2', region_name=region_name)
+        self.ec2 = self.session.client('ec2')
         self.filters = []
         
     def add_filter(self, filter_obj: BaseFilter):
@@ -32,4 +32,4 @@ class AMIService:
             ami_filters.extend(filter_obj.apply_filter())
 
         amis = self.ec2.describe_images(Owners=['self'], Filters=ami_filters)
-        return amis
+        return amis['Images']
