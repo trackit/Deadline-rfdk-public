@@ -1,0 +1,206 @@
+{
+    "type": "object",
+    "properties": {
+        "AllocationStrategy": {
+            "type": "string"
+        },
+        "IamFleetRole": {
+            "type": "string"
+        },
+        "LaunchSpecifications": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "ImageId": {
+                        "type": "string"
+                    },
+                    "InstanceType": {
+                        "type": "string"
+                    },
+                    "BlockDeviceMappings": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "DeviceName": {
+                                    "type": "string"
+                                },
+                                "Ebs": {
+                                    "type": "object",
+                                    "properties": {
+                                        "DeleteOnTermination": {
+                                            "type": "boolean"
+                                        },
+                                        "Encrypted": {
+                                            "type": "boolean"
+                                        },
+                                        "SnapshotId": {
+                                            "type": "string"
+                                        },
+                                        "VolumeSize": {
+                                            "type": "integer"
+                                        },
+                                        "VolumeType": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "DeleteOnTermination",
+                                        "Encrypted",
+                                        "SnapshotId",
+                                        "VolumeSize",
+                                        "VolumeType"
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "DeviceName",
+                                "Ebs"
+                            ]
+                        }
+                    },
+                    "KeyName": {
+                        "type": "string"
+                    },
+                    "IamInstanceProfile": {
+                        "type": "object",
+                        "properties": {
+                            "Arn": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "Arn"
+                        ]
+                    },
+                    "SubnetId": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "ImageId",
+                    "InstanceType",
+                    "BlockDeviceMappings",
+                    "KeyName",
+                    "IamInstanceProfile",
+                    "SubnetId"
+                ]
+            }
+        },
+        "LaunchTemplateConfigs": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "LaunchTemplateSpecification": {
+                        "type": "object",
+                        "properties": {
+                            "Version": {
+                                "type": "string"
+                            },
+                            "LaunchTemplateId": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "Version",
+                            "LaunchTemplateId"
+                        ]
+                    },
+                    "Overrides": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "SubnetId": {
+                                    "type": "string"
+                                },
+                                "InstanceType": {
+                                    "type": "string"
+                                },
+                                "Priority": {
+                                    "type": "integer"
+                                }
+                            },
+                            "required": [
+                                "SubnetId",
+                                "InstanceType"
+                            ]
+                        }
+                    }
+                },
+                "required": [
+                    "LaunchTemplateSpecification",
+                    "Overrides"
+                ]
+            }
+        },
+        "ReplaceUnhealthyInstances": {
+            "type": "boolean"
+        },
+        "TargetCapacity": {
+            "type": "integer"
+        },
+        "TerminateInstancesWithExpiration": {
+            "type": "boolean"
+        },
+        "Type": {
+            "type": "string"
+        },
+        "TagSpecifications": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "ResourceType": {
+                        "type": "string"
+                    },
+                    "Tags": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "Value": {
+                                    "type": "string"
+                                },
+                                "Key": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "Value",
+                                "Key"
+                            ]
+                        }
+                    }
+                },
+                "required": [
+                    "ResourceType",
+                    "Tags"
+                ]
+            }
+        },
+        "ValidFrom": {
+            "type": "string"
+        },
+        "ValidUntil": {
+            "type": "string"
+        },
+        "InstanceInterruptionBehavior": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "AllocationStrategy",
+        "IamFleetRole",
+        "LaunchSpecifications",
+        "LaunchTemplateConfigs",
+        "ReplaceUnhealthyInstances",
+        "TargetCapacity",
+        "TerminateInstancesWithExpiration",
+        "Type",
+        "TagSpecifications",
+        "InstanceInterruptionBehavior"
+    ]
+}

@@ -1,0 +1,36 @@
+{
+    "AllocationStrategy": "capacityOptimized",
+    "IamFleetRole": "arn:aws:iam::576872909007:role/DeadlineStack-BlenderspoteventpluginfleetSpotFleetR-PidO0RIvQkDg",
+    "LaunchSpecifications": [
+        {
+            "ImageId": "ami-02f7d8d586e698497",
+            "InstanceType": "c5.9xlarge",
+            "BlockDeviceMappings": [
+                {
+                    "DeviceName": "/dev/xvda",
+                    "Ebs": {
+                        "DeleteOnTermination": true,
+                        "Encrypted": false,
+                        "SnapshotId": "snap-0e2f8cfd851bb888e",
+                        "VolumeSize": 20,
+                        "VolumeType": "gp2"
+                    }
+                }
+            ],
+            "KeyName": "deadlinetest",
+            "IamInstanceProfile": {
+                "Arn": "arn:aws:iam::576872909007:instance-profile/DeadlineStack-BlenderspoteventpluginfleetInstanceProfile306E6A34-wgxYaaW9uQFU"
+            },
+            "SubnetId": "subnet-0c0d96cc0ca51d9ca, subnet-00d3a467fbbc0c549, subnet-0cff6ec4642a1a9b1"
+        }
+    ],
+    "LaunchTemplateConfigs": [],
+    "ReplaceUnhealthyInstances": true,
+    "TargetCapacity": 1,
+    "TerminateInstancesWithExpiration": true,
+    "Type": "maintain",
+    "TagSpecifications": [],
+    "ValidFrom": "2024-02-14T15:13:46Z",
+    "ValidUntil": "2025-02-14T15:13:46Z",
+    "InstanceInterruptionBehavior": "terminate"
+}
