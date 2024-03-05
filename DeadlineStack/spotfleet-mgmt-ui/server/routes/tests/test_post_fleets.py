@@ -63,6 +63,6 @@ def test_post_fleets_invalid_output():
             "config_schema_path": fleet_config_path,
         },
     )
-    assert response.status_code == 500
+    assert response.status_code == 422
     assert "detail" in response.json()
-    assert "Backup creation failed" in response.json()["detail"]
+    assert "Failed to create backup:" in response.json()["detail"]

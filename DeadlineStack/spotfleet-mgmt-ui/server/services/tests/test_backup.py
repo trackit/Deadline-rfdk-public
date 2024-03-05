@@ -1,4 +1,5 @@
-from ..backup import Backup
+from ..backup import Backup, BackupException
+import pytest
 import os
 
 
@@ -19,24 +20,28 @@ class TestBackup:
 
     def test_invalid_original_path(self):
         # Test case: Attempt to create a backup with an unknown original path (file does not exist).
-        assert self._backup.create('unknow.txt', self._output_path) == False
+        with pytest.raises(BackupException, match="Failed to create backup:"):
+            self._backup.create('unknow.txt', self._output_path)
 
     def test_missing_original_path(self):
         # Test case: Attempt to create a backup with a missing original path.
-        assert self._backup.create('', self._output_path) == False
+        with pytest.raises(BackupException, match="Failed to create backup:"):
+            assert self._backup.create('', self._output_path) is None
 
     def test_missing_output_path(self):
         # Test case: Attempt to create a backup with a missing output path.
-        self.create_original_file()
-        assert self._backup.create(self._original_path, '') == False
-        self.delete_files()
+        with pytest.raises(BackupException, match="Failed to create backup:"):
+            self.create_original_file()
+            assert self._backup.create(self._original_path, '') is None
+            self.delete_files()
 
     def test_same_path(self):
         # Test case: Attempt to create a backup with the same original and output paths.
-        self.create_original_file()
-        assert self._backup.create(
-            self._original_path, self._original_path) == False
-        self.delete_files()
+        with pytest.raises(BackupException, match="Failed to create backup:"):
+            self.create_original_file()
+            assert self._backup.create(
+                self._original_path, self._original_path) is None
+            self.delete_files()
 
     def test_create_success(self):
         # Test case: Successfully create a backup and verify content equality.
