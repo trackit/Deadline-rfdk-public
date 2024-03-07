@@ -1,0 +1,131 @@
+[
+    {
+
+      "Test_Hashkey": "example_hash_key_1",
+      "Test_RangeKey": 123,
+      "AllocationStrategy": "example1_allocation_strategy",
+      "IamFleetRole": "example1_iam_fleet_role",
+      "LaunchSpecifications": [
+        {
+          "ImageId": "example_image_id_1",
+          "InstanceType": "example_instance_type_1",
+          "BlockDeviceMappings": [
+            {
+              "DeviceName": "/dev/sda1",
+              "Ebs": {
+                "DeleteOnTermination": true,
+                "Encrypted": false,
+                "SnapshotId": "example_snapshot_id_1",
+                "VolumeSize": 10,
+                "VolumeType": "gp2"
+              }
+            }
+          ],
+          "KeyName": "example_key_name_1",
+          "IamInstanceProfile": {
+            "Arn": "example_iam_instance_profile_arn_1"
+          },
+          "SubnetId": "example_subnet_id_1"
+        }
+      ],
+      "LaunchTemplateConfigs": [
+        {
+          "LaunchTemplateSpecification": {
+            "Version": "example_version_1",
+            "LaunchTemplateId": "example_launch_template_id_1"
+          },
+          "Overrides": [
+            {
+              "SubnetId": "example_subnet_id_2",
+              "InstanceType": "example_instance_type_2",
+              "Priority": 1
+            }
+          ]
+        }
+      ],
+      "ReplaceUnhealthyInstances": true,
+      "TargetCapacity": 2,
+      "TerminateInstancesWithExpiration": true,
+      "Type": "example_type",
+      "TagSpecifications": [
+        {
+          "ResourceType": "example_resource_type",
+          "Tags": [
+            {
+              "Key": "example_key_1",
+              "Value": "example_value_1"
+            }
+          ]
+        }
+      ],
+      "ValidFrom": "2022-01-01T00:00:00Z",
+      "ValidUntil": "2022-12-31T23:59:59Z",
+      "InstanceInterruptionBehavior": "example_interruption_behavior"
+      
+    },
+    {
+
+        "Test_Hashkey": "example_hash_key_2",
+        "Test_RangeKey": 545,
+        "AllocationStrategy": "example2_allocation_strategy",
+        "IamFleetRole": "example2_iam_fleet_role",
+        "LaunchSpecifications": [
+          {
+            "ImageId": "example_image_id_2",
+            "InstanceType": "example_instance_type_2",
+            "BlockDeviceMappings": [
+              {
+                "DeviceName": "/dev/sda1",
+                "Ebs": {
+                  "DeleteOnTermination": true,
+                  "Encrypted": false,
+                  "SnapshotId": "example_snapshot_id_2",
+                  "VolumeSize": 10,
+                  "VolumeType": "gp2"
+                }
+              }
+            ],
+            "KeyName": "example_key_name_2",
+            "IamInstanceProfile": {
+              "Arn": "example_iam_instance_profile_arn_2"
+            },
+            "SubnetId": "example_subnet_id_2"
+          }
+        ],
+        "LaunchTemplateConfigs": [
+          {
+            "LaunchTemplateSpecification": {
+              "Version": "example_version_2",
+              "LaunchTemplateId": "example_launch_template_id_2"
+            },
+            "Overrides": [
+              {
+                "SubnetId": "example_subnet_id_2",
+                "InstanceType": "example_instance_type_2",
+                "Priority": 1
+              }
+            ]
+          }
+        ],
+        "ReplaceUnhealthyInstances": true,
+        "TargetCapacity": 2,
+        "TerminateInstancesWithExpiration": true,
+        "Type": "example_type",
+        "TagSpecifications": [
+          {
+            "ResourceType": "example_resource_type",
+            "Tags": [
+              {
+                "Key": "example_key_2",
+                "Value": "example_value_2"
+              }
+            ]
+          }
+        ],
+        "ValidFrom": "2022-01-01T00:00:00Z",
+        "ValidUntil": "2022-12-31T23:59:59Z",
+        "InstanceInterruptionBehavior": "example_interruption_behavior"
+        
+      }
+  ]
+  
