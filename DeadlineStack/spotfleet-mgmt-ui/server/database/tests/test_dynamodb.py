@@ -1,3 +1,4 @@
+import os
 from botocore.exceptions import ClientError
 import pytest
 import boto3
@@ -46,7 +47,8 @@ class TestDynamoDB:
     
     @pytest.fixture
     def test_data(self):
-        with open('test_file_config.json') as f:
+        test_data_path = os.path.join(os.path.dirname(__file__), 'test_file_config.json')
+        with open(test_data_path) as f:
             return json.load(f)
 
     def test_put_item_db_success(self, dynamodb_instance, local_dynamodb, test_data):
