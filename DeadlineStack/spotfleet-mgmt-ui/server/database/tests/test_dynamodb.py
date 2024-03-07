@@ -51,10 +51,14 @@ class TestDynamoDB:
 
     def test_put_item_db_success(self, dynamodb_instance, local_dynamodb, test_data):
         for data in test_data:
-            try:
-                dynamodb_instance.put_item_db(data, db_client=local_dynamodb)
-            except ClientError as e:
-                pytest.fail(f"Unexpected error: {e}")
+            dynamodb_instance.put_item_db(data, db_client=local_dynamodb)
+            key = {
+                'Test_Hashkey': data['Test_Hashkey'],
+                'Test_RangeKey': data['Test_RangeKey']
+            }
+            response = local_dynamodb.Table(self._table_name).get_item(Key=key) 
+            retrieved_item = response['Item'] 
+            assert retrieved_item == data
     
     def test_put_item_db_failure(self, dynamodb_instance, local_dynamodb):
         invalid_item = {'InvalidAttributeName': 'value'} 
