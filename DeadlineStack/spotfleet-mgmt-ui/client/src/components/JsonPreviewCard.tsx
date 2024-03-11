@@ -10,6 +10,11 @@ interface JsonPreviewCardProps {
 const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate }) => {
     const [formattedJson, setFormattedJson] = useState(() => JSON.stringify(data, null, 2));
     const [isEditing, setIsEditing] = useState(false);
+    const editableContentRef = useRef<HTMLPreElement>(null);
+
+    useEffect(() => {
+        setFormattedJson(JSON.stringify(data, null, 2));
+    }, [data]);
 
     useEffect(() => {
         setFormattedJson(JSON.stringify(data, null, 2));
@@ -40,6 +45,10 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
         if (state)
             return <JsonEditor initialValue={formattedJson} onChange={handleJsonEditorChange}/>;
         return <pre>{formattedJson}</pre>;
+    };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setFormattedJson(e.target.value);
     };
 
     const downloadJson = () => {
