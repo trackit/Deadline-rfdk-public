@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Card, Button, Flex, Input } from 'antd';
+import React, { useState } from 'react';
+import { Card, Button, Flex } from 'antd';
 
 interface JsonPreviewCardProps {
     data: Record<string, any>;
