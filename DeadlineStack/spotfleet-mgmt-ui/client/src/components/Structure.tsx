@@ -9,9 +9,15 @@ interface StructureProps {
 
 const Structure: React.FC<StructureProps> = ({ data }) => {
     const [isSwitchOn, setIsSwitchOn] = useState(true);
+    const [jsonData, setData] = useState(data);
 
     const onChange = (checked: boolean) => {
         setIsSwitchOn(checked);
+    };
+
+    // use to update json preview
+    const updateData = (updatedData: Record<string, any>) => {
+        setData(updatedData);
     };
 
     return (
