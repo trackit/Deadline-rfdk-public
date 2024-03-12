@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, Button, Flex, notification, Input } from 'antd';
+import JsonEditor from './JsonEditor';
 
 interface JsonPreviewCardProps {
     data: Record<string, any>;
@@ -9,7 +10,6 @@ interface JsonPreviewCardProps {
 const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate }) => {
     const [formattedJson, setFormattedJson] = useState(() => JSON.stringify(data, null, 2));
     const [isEditing, setIsEditing] = useState(false);
-    const editableContentRef = useRef<HTMLPreElement>(null);
 
     useEffect(() => {
         setFormattedJson(JSON.stringify(data, null, 2));
@@ -20,18 +20,20 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
             try {
                 const updatedData = JSON.parse(formattedJson);
                 onDataUpdate(updatedData);
+                setIsEditing(!isEditing);
             } catch (error) {
                 notification.open({
                     message: 'Invalid JSON format',
                     description: 'Please make sure the JSON is correctly formatted.',
                 });
             }
+        } else {
+            setIsEditing(!isEditing);
         }
-        setIsEditing(!isEditing);
     };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setFormattedJson(e.target.value);
+    const handleJsonEditorChange = (newValue: string) => {
+        setFormattedJson(newValue);
     };
 
     const downloadJson = () => {
@@ -52,11 +54,7 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
             </Flex>
         } style={{ overflow: 'auto' }}>
             {isEditing ? (
-                <Input.TextArea
-                    value={formattedJson}
-                    onChange={handleInputChange}
-                    autoSize={{ minRows: 5, maxRows: 20 }}
-                />
+                <JsonEditor initialValue={formattedJson} onChange={handleJsonEditorChange} />
             ) : (
                 <pre>{formattedJson}</pre>
             )}
