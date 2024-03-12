@@ -20,6 +20,17 @@ const Structure: React.FC<StructureProps> = ({ data }) => {
         setData(updatedData);
     };
 
+    const renderDeadlineInfo = () => {
+        if (isSwitchOn) {
+            return (
+                <div style={{ marginBottom: '16px' }}>
+                    {/* Add Deadline info here */}
+                </div>
+            );
+        }
+        return null;
+    };
+
     return (
         <div style={{ padding: '16px' }}>
             <Row justify="space-between" align="middle" style={{ marginBottom: '16px', alignItems: 'flex-start' }}>
@@ -34,11 +45,7 @@ const Structure: React.FC<StructureProps> = ({ data }) => {
                     {/* Add fleet configuration here */}
                 </Col>
                 <Col span={14}>
-                    {isSwitchOn && (
-                        <div style={{ marginBottom: '16px' }}>
-                            {/* Add Deadline info here */}
-                        </div>
-                    )}
+                    {renderDeadlineInfo()}
                     <div>
                         {/* Add JsonPreview here */}
                     </div>
