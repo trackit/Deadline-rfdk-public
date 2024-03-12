@@ -1,25 +1,45 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import './App.css';
 import Structure from './components/Structure';
 
 function App() {
-  useEffect(() => {
-    document.title = 'DeadLine SFMT';
-  }, []);
 
   return (
     <Structure data={
       {
-        "AllocationStrategy": "capacityOptimized",
-        "IamFleetRole": "",
-        "LaunchSpecifications": [],
-        "LaunchTemplateConfigs": [],
-        "ReplaceUnhealthyInstances": true,
-        "TargetCapacity": 1,
-        "TerminateInstancesWithExpiration": true,
-        "Type": "maintain",
-        "TagSpecifications": [],
-        "InstanceInterruptionBehavior": "terminate"
+        "Fleet01": {
+          "AllocationStrategy": "capacityOptimized",
+          "IamFleetRole": "arn:aws:iam::[AWS-ACCOUNT]:role/aws-ec2-spot-fleet-tagging-role",
+          "LaunchSpecifications": [],
+          "LaunchTemplateConfigs": [
+            {
+              "LaunchTemplateSpecification": {
+                "Version": "$Latest",
+                "LaunchTemplateId": "[LAUNCH-TEMPLATE1]"
+              },
+              "Overrides": [
+                {
+                  "SubnetId": "[SUBNET1]",
+                  "InstanceType": "[INSTANCE-TYPE]"
+                }]
+            }
+          ],
+          "ReplaceUnhealthyInstances": true,
+          "TargetCapacity": "[TARGET-CAPACITY-VALUE]",
+          "TerminateInstancesWithExpiration": true,
+          "Type": "maintain",
+          "TagSpecifications": [
+            {
+              "ResourceType": "spot-fleet-request",
+              "Tags": [
+                {
+                  "Value": "[PROJECT-VALUE]",
+                  "Key": "project"
+                }
+              ]
+            }
+          ]
+        }
       }
     } />
   );
