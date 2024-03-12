@@ -36,6 +36,14 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
         setFormattedJson(newValue);
     };
 
+    const getRenderedContent = () => {
+        if (isEditing) {
+            return <JsonEditor initialValue={formattedJson} onChange={handleJsonEditorChange} />;
+        } else {
+            return <pre>{formattedJson}</pre>;
+        }
+    };
+
     const downloadJson = () => {
         const blob = new Blob([formattedJson], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
@@ -53,11 +61,7 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
                 <Button type="primary" onClick={downloadJson}>Download</Button>
             </Flex>
         } style={{ overflow: 'auto' }}>
-            {isEditing ? (
-                <JsonEditor initialValue={formattedJson} onChange={handleJsonEditorChange} />
-            ) : (
-                <pre>{formattedJson}</pre>
-            )}
+            {getRenderedContent()}
         </Card>
     );
 };
