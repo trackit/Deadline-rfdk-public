@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Card, Button, Flex, notification, Input } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Card, Button, Flex, notification } from 'antd';
 import JsonEditor from './JsonEditor';
 
 interface JsonPreviewCardProps {
@@ -37,9 +37,8 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
         if (selectedFile) {
             const reader = new FileReader();
             reader.onload = (event) => {
-                if (event.target?.result) {
+                if (event.target?.result)
                     setFormattedJson(event.target.result as string);
-                }
             };
             reader.readAsText(selectedFile);
         }
@@ -65,6 +64,25 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
         URL.revokeObjectURL(url);
     };
 
+    const handleFileSelection = (file: File) => {
+        setSelectedFile(file);
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            if (event.target?.result) {
+                try {
+                    JSON.parse(event.target.result as string);
+                } catch (error) {
+                    notification.open({
+                        message: 'Invalid JSON format',
+                        description: 'Please make sure the JSON is correctly formatted.',
+                    });
+                    setIsEditing(true);
+                }
+            }
+        };
+        reader.readAsText(file);
+    };
+
     const uploadJson = () => {
         const input = document.createElement('input');
         input.type = 'file';
@@ -72,7 +90,7 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
         input.onchange = (event) => {
             const file = (event.target as HTMLInputElement).files?.[0];
             if (file)
-                setSelectedFile(file);
+                handleFileSelection(file);
         };
         input.click();
     };
