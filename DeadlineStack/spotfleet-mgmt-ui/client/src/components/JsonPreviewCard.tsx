@@ -15,20 +15,20 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
         setFormattedJson(JSON.stringify(data, null, 2));
     }, [data]);
 
-    const handleEditClick = () => {
-        if (isEditing) {
-            try {
-                const updatedData = JSON.parse(formattedJson);
-                onDataUpdate(updatedData);
-                setIsEditing(!isEditing);
-            } catch (error) {
-                notification.open({
-                    message: 'Invalid JSON format',
-                    description: 'Please make sure the JSON is correctly formatted.',
-                });
-            }
-        } else {
-            setIsEditing(!isEditing);
+    const handleEditClick = (state: boolean) => {
+        if (!state) {
+            setIsEditing(!state);
+            return;
+        }
+        try {
+            const updatedData = JSON.parse(formattedJson);
+            onDataUpdate(updatedData);
+            setIsEditing(!state);
+        } catch (error) {
+            notification.open({
+                message: 'Invalid JSON format',
+                description: 'Please make sure the JSON is correctly formatted.',
+            });
         }
     };
 
@@ -36,12 +36,10 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
         setFormattedJson(newValue);
     };
 
-    const getRenderedContent = () => {
-        if (isEditing) {
-            return <JsonEditor initialValue={formattedJson} onChange={handleJsonEditorChange} />;
-        } else {
-            return <pre>{formattedJson}</pre>;
-        }
+    const getRenderedContent = (state: boolean) => {
+        if (state)
+            return <JsonEditor initialValue={formattedJson} onChange={handleJsonEditorChange}/>;
+        return <pre>{formattedJson}</pre>;
     };
 
     const downloadJson = () => {
@@ -57,11 +55,11 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
     return (
         <Card title="JSON Code preview" extra={
             <Flex gap="small" wrap="wrap">
-                <Button type="default" onClick={handleEditClick}>{isEditing ? 'Save' : 'Edit'}</Button>
+                <Button type="default" onClick={() => handleEditClick(isEditing)}>{isEditing ? 'Save' : 'Edit'}</Button>
                 <Button type="primary" onClick={downloadJson}>Download</Button>
             </Flex>
         } style={{ overflow: 'auto' }}>
-            {getRenderedContent()}
+            {getRenderedContent(isEditing)}
         </Card>
     );
 };
