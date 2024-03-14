@@ -1,63 +1,70 @@
 
-export interface FleetData {
-    [fleetName: string]: {
-        AllocationStrategy: string;
-                IamFleetRole: string;
-                LaunchSpecifications: Array<{
-                    ImageId: string;
-                    InstanceType: string
-                    BlockDeviceMappings: Array<{
-                        Devicename: string;
-                        Ebs: Array<{
-                            DeleteOnTermination: boolean;
-                        Encrypted: boolean;
-                        SnapshotId: string;
-                        VolumeSize: 20;
-                        VolumeType: string;
-                        }>;
-                    }>;
-                    KeyName: string;
-                    IamInstanceProfile: Array<{
-                        Arn: string;
-                    }>;
-                    SubnetId: string;
-                }>;
-                LaunchTemplateConfigs: Array<{
-                    LaunchTemplateSpecification: {
-                        Version: string;
-                        LaunchTemplateId: string;
-                    };
-                    Overrides: Array<{
-                        SubnetId: string;
-                        InstanceType: string;
-                    }>;
-                }>;
-                ReplaceUnhealthyInstances: boolean;
-                TargetCapacity: number | string; 
-                TerminateInstancesWithExpiration: boolean;
-                Type: string;
-                TagSpecifications: Array<{
-                    ResourceType: string;
-                    Tags: Array<{
-                        Value: string;
-                        Key: string;
-                    }>;
-                }>;
-                ValidFrom: string;
-                ValidUntil: string;
-                InstanceInterruptionBehavior: string;
-            };
+interface BlockDeviceMapping {
+    DeviceName: string;
+    Ebs: {
+        DeleteOnTermination: boolean;
+        Encrypted: boolean;
+        SnapshotId: string;
+        VolumeSize: number;
+        VolumeType: string;
+    };
 }
 
+interface IamInstanceProfile {
+    Arn: string;
+}
+
+interface LaunchSpecification {
+    ImageId: string;
+    InstanceType: string;
+    BlockDeviceMappings: BlockDeviceMapping[];
+    KeyName: string;
+    IamInstanceProfile: IamInstanceProfile;
+    SubnetId: string;
+}
+
+interface LaunchTemplateSpecification {
+    Version: string;
+    LaunchTemplateId: string;
+}
+
+interface Overrides {
+    SubnetId: string;
+    InstanceType: string;
+}
+
+interface LaunchTemplateConfig {
+    LaunchTemplateSpecification: LaunchTemplateSpecification;
+    Overrides: Overrides;
+}
+
+interface Tag {
+    Value: string;
+    Key: string;
+}
+
+interface TagSpecification {
+    ResourceType: string;
+    Tags: Tag[];
+}
+
+export interface Fleet {
+    [key: string]: {
+        AllocationStrategy: string;
+        IamFleetRole: string;
+        LaunchSpecifications: LaunchSpecification[];
+        LaunchTemplateConfigs: LaunchTemplateConfig[];
+        ReplaceUnhealthyInstances: boolean;
+        TargetCapacity: number;
+        TerminateInstancesWithExpiration: boolean;
+        Type: string;
+        TagSpecifications: TagSpecification[];
+        ValidFrom: string;
+        ValidUntil: string;
+        InstanceInterruptionBehavior: string;
+    };
+}
 
 export interface FleetFormProps {
-    fleetData: FleetData;
-    fleetTitle: string;
-}
-
-
-export interface InputFieldProps {
-    placeholder?: string;
-    value?: string;
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  formData: Fleet;
 }

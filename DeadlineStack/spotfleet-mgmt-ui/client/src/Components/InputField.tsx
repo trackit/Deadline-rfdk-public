@@ -1,16 +1,27 @@
-import React from 'react';
-import { Input } from 'antd';
-import { InputFieldProps } from '../interface';
+import React, { useState } from 'react';
+import { Input, Typography } from 'antd';
 
-const InputField: React.FC<InputFieldProps> = ({ placeholder, value, onChange }) => {
-    return (
-        <Input
-            placeholder={placeholder}
-            value={value}
-            onChange={onChange}
-            style={{ backgroundColor: '#e1e2e3', color: 'white' }}
-        />
-    );
+interface InputFieldProps {
+  title: string;
+  sentence: string;
+  placeholder: string;
+  initialValue?: string; // Optional initial value prop
+}
+
+const InputField: React.FC<InputFieldProps> = ({ title, sentence, placeholder, initialValue }) => {
+  const [value, setValue] = useState(initialValue || ''); // Initialize state with the initial value, if provided
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(event.target.value); // Update state with the new input value
+  };
+
+  return (
+    <div>
+      <Typography.Title level={5}>{title}</Typography.Title>
+      <p>{sentence}</p>
+      <Input placeholder={placeholder} value={value} onChange={handleChange} />
+    </div>
+  );
 };
 
 export default InputField;

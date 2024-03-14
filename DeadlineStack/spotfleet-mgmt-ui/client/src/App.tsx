@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import Structure from './components/Structure';
+import Structure from './Components/Structure';
 import fleetData from './data/config';
 
 function App() {
