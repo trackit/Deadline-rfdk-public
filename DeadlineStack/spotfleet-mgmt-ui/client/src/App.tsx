@@ -1,13 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import './App.css';
+import Structure from './components/Structure';
+import fleetData from './data/config';
 
 function App() {
-  useEffect(() => {
-    document.title = 'DeadLine SFMT';
-  }, []);
 
   return (
-    <div />
+    <Structure data={fleetData} />
   );
 }
 export default App;

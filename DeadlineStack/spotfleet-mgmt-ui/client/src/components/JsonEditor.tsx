@@ -13,7 +13,7 @@ const JsonEditor: React.FC<JsonEditorProps> = ({ initialValue, onChange }) => {
 
     return (
         <MonacoEditor
-            height={500}
+            height={700}
             language="json"
             value={initialValue}
             options={{ selectOnLineNumbers: true, }}
