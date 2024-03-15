@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Card, Button, Flex, notification, Input } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Card, Button, Flex, notification } from 'antd';
 import JsonEditor from './JsonEditor';
 
 interface JsonPreviewCardProps {
@@ -9,6 +9,7 @@ interface JsonPreviewCardProps {
 
 const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate }) => {
     const [formattedJson, setFormattedJson] = useState(() => JSON.stringify(data, null, 2));
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isEditing, setIsEditing] = useState(false);
 
     useEffect(() => {
@@ -32,13 +33,25 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
         }
     };
 
+    useEffect(() => {
+        if (!selectedFile)
+            return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            if (event.target?.result)
+                setFormattedJson(event.target.result as string);
+        };
+        reader.readAsText(selectedFile);
+
+    }, [selectedFile]);
+
     const handleJsonEditorChange = (newValue: string) => {
         setFormattedJson(newValue);
     };
 
     const getRenderedContent = (state: boolean) => {
         if (state)
-            return <JsonEditor initialValue={formattedJson} onChange={handleJsonEditorChange}/>;
+            return <JsonEditor initialValue={formattedJson} onChange={handleJsonEditorChange} />;
         return <pre>{formattedJson}</pre>;
     };
 
@@ -52,10 +65,43 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
         URL.revokeObjectURL(url);
     };
 
+    const handleFileSelection = (file: File) => {
+        setSelectedFile(file);
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            if (!event.target?.result)
+                return;
+            try {
+                JSON.parse(event.target.result as string);
+            } catch (error) {
+                notification.open({
+                    message: 'Invalid JSON format',
+                    description: 'Please make sure the JSON is correctly formatted.',
+                });
+                setIsEditing(true);
+
+            }
+        };
+        reader.readAsText(file);
+    };
+
+    const uploadJson = () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+        input.onchange = (event) => {
+            const file = (event.target as HTMLInputElement).files?.[0];
+            if (file)
+                handleFileSelection(file);
+        };
+        input.click();
+    };
+
     return (
         <Card title="JSON Code preview" extra={
             <Flex gap="small" wrap="wrap">
                 <Button type="default" onClick={() => handleEditClick(isEditing)}>{isEditing ? 'Save' : 'Edit'}</Button>
+                <Button type="default" onClick={uploadJson}>Upload</Button>
                 <Button type="primary" onClick={downloadJson}>Download</Button>
             </Flex>
         } style={{ overflow: 'auto' }}>
