@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Typography, Row, Col } from 'antd';
 import JsonPreviewCard from './JsonPreviewCard';
+import DynamicForm from './DynamicForm';
 
 const { Title } = Typography;
 
@@ -19,7 +20,7 @@ const Structure: React.FC<StructureProps> = ({ data }) => {
             <Title level={3}>SFMT</Title>
             <Row gutter={16}>
                 <Col span={10}>
-                    {/* Add fleet configuration here */}
+                <DynamicForm formData={jsonData} onDataUpdate={updateData} />
                 </Col>
                 <Col span={14}>
                     <JsonPreviewCard data={jsonData} onDataUpdate={updateData}/>
