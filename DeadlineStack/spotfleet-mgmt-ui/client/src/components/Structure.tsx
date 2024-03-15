@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Typography, Row, Col, Image, Space } from 'antd';
 import JsonPreviewCard from './JsonPreviewCard';
 import logo from '../assets/trackit_logo.png';
+import DynamicForm from './DynamicForm';
 
 const { Title } = Typography;
 
@@ -26,7 +27,7 @@ const Structure: React.FC<StructureProps> = ({ data }) => {
             </Space>
             <Row gutter={16} style={{ height: '94%' }}>
                 <Col lg={10} sm={24}>
-                    {/* Add fleet configuration here */}
+                <DynamicForm formData={jsonData} onDataUpdate={updateData} />
                 </Col>
                 <Col lg={14} sm={24}>
                     <JsonPreviewCard data={jsonData} onDataUpdate={updateData} />
