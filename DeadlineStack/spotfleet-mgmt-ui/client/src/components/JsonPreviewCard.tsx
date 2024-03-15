@@ -34,14 +34,15 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
     };
 
     useEffect(() => {
-        if (selectedFile) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                if (event.target?.result)
-                    setFormattedJson(event.target.result as string);
-            };
-            reader.readAsText(selectedFile);
-        }
+        if (!selectedFile)
+            return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            if (event.target?.result)
+                setFormattedJson(event.target.result as string);
+        };
+        reader.readAsText(selectedFile);
+
     }, [selectedFile]);
 
     const handleJsonEditorChange = (newValue: string) => {
@@ -68,16 +69,17 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
         setSelectedFile(file);
         const reader = new FileReader();
         reader.onload = (event) => {
-            if (event.target?.result) {
-                try {
-                    JSON.parse(event.target.result as string);
-                } catch (error) {
-                    notification.open({
-                        message: 'Invalid JSON format',
-                        description: 'Please make sure the JSON is correctly formatted.',
-                    });
-                    setIsEditing(true);
-                }
+            if (!event.target?.result)
+                return;
+            try {
+                JSON.parse(event.target.result as string);
+            } catch (error) {
+                notification.open({
+                    message: 'Invalid JSON format',
+                    description: 'Please make sure the JSON is correctly formatted.',
+                });
+                setIsEditing(true);
+
             }
         };
         reader.readAsText(file);
