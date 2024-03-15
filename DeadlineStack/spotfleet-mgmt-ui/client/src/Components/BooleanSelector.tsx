@@ -1,20 +1,16 @@
 import React from 'react';
-import { Space, Typography, Switch } from 'antd';
-
-const { Title } = Typography;
+import { Form, Switch } from 'antd';
 
 interface BooleanSelectorProps {
-    title: string;
-    checked: boolean;
-    onChange: (checked: boolean) => void;
+    label: string;
+    name: string[];
 }
 
-const BooleanSelector: React.FC<BooleanSelectorProps> = ({ title, checked, onChange }) => {
+const BooleanSelector: React.FC<BooleanSelectorProps> = ({ label, name }) => {
     return (
-        <Space direction="horizontal" style={{ marginBottom: '8px' }}>
-            <Title level={5} style={{ paddingRight: "40px" }}>{title}</Title>
-            <Switch checkedChildren="True" unCheckedChildren="False" checked={checked} onChange={onChange} />
-        </Space>
+        <Form.Item label={label} name={name}>
+            <Switch checkedChildren="True" unCheckedChildren="False" />
+        </Form.Item>
     );
 }
 

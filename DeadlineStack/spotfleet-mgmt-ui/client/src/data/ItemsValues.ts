@@ -1,5 +1,5 @@
 
-const AllocationStrategyValue = [
+export const AllocationStrategyValue = [
     "capacityOptimized",
     "capacityOptimizedPrioritized",
     "diversified",
@@ -7,4 +7,7 @@ const AllocationStrategyValue = [
     "priceCapacityOptimized"
 ];
 
-export default AllocationStrategyValue;
+export const TypeValue = [
+    "maintain",
+    "request"
+];

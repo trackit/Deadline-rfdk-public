@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Form, Input, Button, Card, Switch, notification, InputNumber } from 'antd';
 import { DownCircleOutlined, UpCircleOutlined } from '@ant-design/icons';
 import { FleetFormProps } from '../interface'
+import DropDownSelector from './DropDownSelector';
+import { AllocationStrategyValue, TypeValue } from '../data/ItemsValues';
+import BooleanSelector from './BooleanSelector';
 
 
 const DynamicForm = ({ formData }: FleetFormProps) => {
@@ -74,7 +77,7 @@ const [form] = Form.useForm();
         hoverable title={fleetName}
         extra = { <Button
             onClick={() => handleFleetSetup(fleetName)}
-            icon={expandedFleet === fleetName ? <UpCircleOutlined /> : <DownCircleOutlined />}
+            // icon={expandedFleet === fleetName ? <UpCircleOutlined /> : <DownCircleOutlined />}
           />}
         styles={{ body: { padding: 0, overflow: 'hidden' } }}
         >
@@ -100,7 +103,11 @@ const [form] = Form.useForm();
                   </div>
                 ))}
               </>
-            ) : null}
+                ) : null}
+            <BooleanSelector label="TerminateInstancesWithExpiration" name={[fleetName, 'TerminateInstancesWithExpiration']} />
+            <BooleanSelector label="ReplaceUnhealthyInstances" name={[fleetName, 'ReplaceUnhealthyInstances']} />
+            <DropDownSelector label="AllocationStrategy" name={[fleetName, 'AllocationStrategy']} items={AllocationStrategyValue} />
+            <DropDownSelector label="Type" name={[fleetName, 'Type']} items={TypeValue} />
             <Form.Item label="Worker maximum capacity" name={[fleetName, 'TargetCapacity']}>
             <InputNumber min={1} max={10}  />
             </Form.Item>

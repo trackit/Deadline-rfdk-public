@@ -16,6 +16,17 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
         setFormattedJson(JSON.stringify(data, null, 2));
     }, [data]);
 
+    useEffect(() => {
+        if (!selectedFile)
+            return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            if (event.target?.result)
+                setFormattedJson(event.target.result as string);
+        };
+        reader.readAsText(selectedFile);
+    }, [selectedFile]);
+
     const handleEditClick = (state: boolean) => {
         if (!state) {
             setIsEditing(!state);
@@ -32,18 +43,6 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
             });
         }
     };
-
-    useEffect(() => {
-        if (!selectedFile)
-            return;
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            if (event.target?.result)
-                setFormattedJson(event.target.result as string);
-        };
-        reader.readAsText(selectedFile);
-
-    }, [selectedFile]);
 
     const handleJsonEditorChange = (newValue: string) => {
         setFormattedJson(newValue);
@@ -72,14 +71,14 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
             if (!event.target?.result)
                 return;
             try {
-                JSON.parse(event.target.result as string);
+                const uploadedDAta = JSON.parse(event.target.result as string);
+                onDataUpdate(uploadedDAta);
             } catch (error) {
                 notification.open({
                     message: 'Invalid JSON format',
                     description: 'Please make sure the JSON is correctly formatted.',
                 });
                 setIsEditing(true);
-
             }
         };
         reader.readAsText(file);
