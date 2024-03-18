@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Card, Switch, notification, InputNumber, Typography } from 'antd';
-import { DownCircleOutlined, UpCircleOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Card, Switch, notification, InputNumber, Typography, Collapse, Space } from 'antd';
+import { ArrowUpOutlined, CaretRightOutlined, DownCircleOutlined, UpCircleOutlined } from '@ant-design/icons';
 import { FleetFormProps } from '../interface'
 import FormItem from './FormItem';
 import InputField from './InputField';
 import BooleanSelector from './BooleanSelector';
 import DropDownSelector from './DropDownSelector';
 import { AllocationStrategyValue, TypeValue } from '../data/ItemsValues';
+import FormList from './FormList';
 
-
+const { Panel } = Collapse;
 
 const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
   const [expandedFleet, setExpandedFleet] = useState<string | null>(null);
@@ -17,16 +18,11 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
   const handleFleetSetup = (fleetName: string) => {
     setExpandedFleet(expandedFleet === fleetName ? null : fleetName);
   };
-
+  
   const onFinish = (values: any) => {
 
     console.log('values',values)
-   //const currentFleetName = Object.keys(values)[0];
-    //const newFleetName = values[currentFleetName].FleetName; 
-    //const updatedFormData = { ...formData };
-    //updatedFormData[newFleetName] = { ...updatedFormData[currentFleetName] };
-    //delete updatedFormData[currentFleetName];
-    const updatedValues = { ...formData, ...values };
+    const updatedValues = { ...formData, ...values};
     Object.keys(updatedValues).forEach((fleetName) => {
       if (updatedValues[fleetName].LaunchSpecifications) {
         updatedValues[fleetName].LaunchSpecifications.forEach((specification: any) => {
@@ -70,72 +66,68 @@ const handleExport = () => {
     });
   }
 };
-
-  return (
-    <>
-      {Object.entries(formData).map(([fleetName, fleet]) => (
-        <div key={fleetName} style={{ marginBottom: '20px' }}>
-        <Card
-        key={fleetName}
-        hoverable title={fleetName}
-        extra = { <Button
-            onClick={() => handleFleetSetup(fleetName)}
-            icon={expandedFleet === fleetName ? <UpCircleOutlined /> : <DownCircleOutlined />}
-          />}
-        styles={{ body: { padding: 0, overflow: 'hidden' } }}
-        >
-        {expandedFleet === fleetName && (
-           <div key={fleetName} style={{ height: '300px', overflow: 'auto' }}>
-          <Form key={fleetName} onFinish={onFinish} initialValues={formData}>
-            <InputField
-                    title="Setup your fleet"
-                    sentence="Edit your fleet name"
-                    placeholder="Fleet name" 
-                    name={[fleetName, 'FleetName']}
-
-                    />
-            {fleet.LaunchSpecifications?.length > 0 ? (
-              <>
-                {fleet.LaunchSpecifications.map((specification, index) => (
+const collapseItems = Object.entries(formData).map(([fleetName, fleet], index_collapse) => ({
+    key: fleetName,
+    label: `Fleet ${index_collapse + 1}`,
+    children: (
+    <Form onFinish={onFinish} initialValues={formData}>
+        <InputField
+          title="Setup your fleet"
+          sentence="Edit your fleet name"
+          placeholder="Fleet name"
+          name={[fleetName, 'FleetName']}
+        />
+        {fleet.LaunchSpecifications?.length > 0 ? (
+          <>
+            {fleet.LaunchSpecifications.map((specification, index) => (
               <div key={index}>
-                <FormItem fieldValue={specification} fieldPath={[fleetName, 'LaunchSpecifications', index]}  />
-               
+                <FormItem fieldValue={specification} fieldPath={[fleetName, 'LaunchSpecifications', index]} />
               </div>
             ))}
-              </>
-            ) : fleet.LaunchTemplateConfigs?.length > 0 ? (
-              <>
-              <Switch />
-                {fleet.LaunchTemplateConfigs.map((config, index) => (
-                  <div key={index}>
-                    <FormItem fieldValue={config} fieldPath={[fleetName, 'LaunchTemplateConfigs', index]}  />
-                  </div>
-                ))}
-              </>
-            ) : null}
-            <BooleanSelector label="TerminateInstancesWithExpiration" name={[fleetName, 'TerminateInstancesWithExpiration']} />
-            <BooleanSelector label="ReplaceUnhealthyInstances" name={[fleetName, 'ReplaceUnhealthyInstances']} />
-            <DropDownSelector label="AllocationStrategy" name={[fleetName, 'AllocationStrategy']} items={AllocationStrategyValue} />
-            <DropDownSelector label="Type" name={[fleetName, 'Type']} items={TypeValue} />
-            <Typography.Title level={5}>Worker maximum capacity</Typography.Title>
-            <Form.Item  name={[fleetName, 'TargetCapacity']} initialValue={fleet.TargetCapacity}>
-               <InputNumber min={1} max={10} />
-            </Form.Item>
-            <Form.Item >
-                  <Button type="primary" htmlType="submit" >
-                    Submit
-                  </Button>
-                  <Button  onClick={handleExport}>
-                    Export
-                  </Button>
-                </Form.Item>
-          </Form>
-          </div>
-          )}
-        </Card>
-        </div>
-      ))}
-    </>
+          </>
+        ) : fleet.LaunchTemplateConfigs?.length > 0 ? (
+          <>
+            <BooleanSelector label={'Linux'} name={[]} />
+            {fleet.LaunchTemplateConfigs.map((config, index) => (
+              <div key={index}>
+                <FormItem fieldValue={config} fieldPath={[fleetName, 'LaunchTemplateConfigs', index]} />
+              </div>
+            ))}
+          </>
+        ) : null}
+        <BooleanSelector label="TerminateInstancesWithExpiration" name={[fleetName, 'TerminateInstancesWithExpiration']} />
+        <BooleanSelector label="ReplaceUnhealthyInstances" name={[fleetName, 'ReplaceUnhealthyInstances']} />
+        <DropDownSelector label="AllocationStrategy" name={[fleetName, 'AllocationStrategy']} items={AllocationStrategyValue} />
+        <DropDownSelector label="Type" name={[fleetName, 'Type']} items={TypeValue} />
+        <Typography.Title level={5}>Worker maximum capacity</Typography.Title>
+        <Form.Item name={[fleetName, 'TargetCapacity']} >
+          <InputNumber min={1} max={10} />
+        </Form.Item>
+        <Form.Item >
+        <FormList name={[fleetName, 'TagSpecifications']} subItems={['ResourceType', 'Tags']} />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit">Submit</Button>
+          <Button onClick={handleExport}>Export</Button>
+        </Form.Item>
+      </Form>
+    ),
+  }));
+
+  return (
+    <Space direction="vertical" size="small" style={{ display: 'flex' }}>
+    {collapseItems.map(({ key, label, children }) => (
+      <Collapse
+        key={key}
+        accordion
+        expandIconPosition='end'
+        expandIcon={({ isActive }) => <ArrowUpOutlined rotate={isActive ? 180 : 0} />}
+        collapsible="header"
+        items={[{ key, label, children }]}
+      />
+    ))}
+
+  </Space>
   );
 };
 export default DynamicForm;
