@@ -20,6 +20,14 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
     setFormValues(formData);
     setSubmittedValues(formData);
   }, [formData]);
+  interface InstanceTypeMap {
+    [key: string]: {
+      InstanceType: string;
+      SubnetIds: string[];
+    };
+  }
+
+
 
   const handlePanelChange = (key: string | string[]) => {
     setActiveKey(key);
@@ -181,33 +189,39 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
     key: fleetName,
     label: fleetName,
     children: (
-      <Form onFinish={onFinish} initialValues={formValues}>
-        <InputField
-          title="Setup your fleet"
-          sentence="Edit your fleet name"
-          placeholder="Fleet name"
-          initialValue={fleetName}
-          name={[fleetName, 'FleetName']}
-        />
-        {renderLaunchTemplateConfig(fleetName, formValues)}
-        <BooleanSelector label="TerminateInstancesWithExpiration" name={[fleetName, 'TerminateInstancesWithExpiration']} />
-        <BooleanSelector label="ReplaceUnhealthyInstances" name={[fleetName, 'ReplaceUnhealthyInstances']} />
-        <DropDownSelector label="AllocationStrategy" name={[fleetName, 'AllocationStrategy']} items={AllocationStrategyValue} onChange={(value) => handleAllocationStrategyChange(fleetName, value)} />
-        <DropDownSelector label="Type" name={[fleetName, 'Type']} items={TypeValue} />
-        <Typography.Title level={5}>Worker maximum capacity</Typography.Title>
-        <Form.Item name={[fleetName, 'TargetCapacity']} >
-          <InputNumber min={1} />
-        </Form.Item>
-        <TagSpecifications name={[fleetName, 'TagSpecifications']} subItems={['ResourceType', 'Tags']} />
-       <Space>
-       <Form.Item>
-          <Button type="primary" htmlType="submit">Submit</Button>
-        </Form.Item>
-        <Form.Item>
-        <Button  onClick={handleExport}>Export</Button>
-        </Form.Item>
-       </Space>
-      </Form>
+      <div style={{ maxHeight: '500px', overflow: 'auto' }}>
+        <Form onFinish={onFinish} initialValues={formValues}>
+          <InputField
+            title="Setup your fleet"
+            sentence="Edit your fleet name"
+            placeholder="Fleet name"
+            initialValue={fleetName}
+            name={[fleetName, 'FleetName']}
+
+          />
+          {renderLaunchTemplateConfig(fleetName, formValues)}
+          <BooleanSelector label="TerminateInstancesWithExpiration" name={[fleetName, 'TerminateInstancesWithExpiration']} />
+          <BooleanSelector label="ReplaceUnhealthyInstances" name={[fleetName, 'ReplaceUnhealthyInstances']} />
+          <DropDownSelector label="AllocationStrategy" name={[fleetName, 'AllocationStrategy']} items={AllocationStrategyValue} />
+          <DropDownSelector label="Type" name={[fleetName, 'Type']} items={TypeValue} />
+          <Typography.Title level={5}>Worker maximum capacity</Typography.Title>
+          <Form.Item name={[fleetName, 'TargetCapacity']} >
+            <InputNumber min={0} variant="filled" style={{ width: 120 }} />
+          </Form.Item>
+          <Form.Item >
+            <TagSpecifications name={[fleetName, 'TagSpecifications']} subItems={['ResourceType', 'Tags']} />
+          </Form.Item>
+
+          <Space>
+            <Form.Item>
+              <Button type="primary" htmlType="submit"  >Submit</Button>
+            </Form.Item>
+            <Form.Item>
+              <Button onClick={() => handleExport()} >Export</Button>
+            </Form.Item>
+          </Space>
+        </Form>
+      </div>
     ),
   }));
 

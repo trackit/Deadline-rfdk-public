@@ -12,7 +12,7 @@ const DropDownSelector: React.FC<GeneralInfosProps> = ({ label, name, items, onC
     return (
         <Form.Item label={label} name={name}>
             <Select
-                style={{ width: "40%" }}
+                style={{ width: "70%" }}
                 options={items.map((item) => ({ label: item, value: item }))}
                 onChange={onChange}
             />
