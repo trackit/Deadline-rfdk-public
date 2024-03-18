@@ -18,11 +18,11 @@ const Structure: React.FC<StructureProps> = ({ data }) => {
     return (
         <div style={{ padding: '16px' }}>
             <Title level={3}>SFMT</Title>
-            <Row gutter={16}>
-                <Col span={10}>
+            <Row gutter={16} justify={"space-between"}>
+                <Col sm={24} lg={10}>
                 <DynamicForm formData={jsonData} onDataUpdate={updateData} />
                 </Col>
-                <Col span={14}>
+                <Col sm={24} lg={14}>
                     <JsonPreviewCard data={jsonData} onDataUpdate={updateData}/>
                 </Col>
             </Row>

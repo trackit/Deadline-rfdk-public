@@ -19,7 +19,7 @@ interface IamInstanceProfile {
 interface LaunchSpecification {
     ImageId: string;
     InstanceType: string;
-    BlockDeviceMappings: BlockDeviceMapping;
+    BlockDeviceMappings: BlockDeviceMapping[];
     KeyName: string;
     IamInstanceProfile: IamInstanceProfile;
     SubnetId: string;
@@ -37,7 +37,7 @@ interface Override {
 
 interface LaunchTemplateConfig {
     LaunchTemplateSpecification: LaunchTemplateSpecification;
-    Overrides: Override;
+    Overrides: Override[];
 }
 
 interface Tag {
