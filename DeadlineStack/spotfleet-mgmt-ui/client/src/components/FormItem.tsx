@@ -11,10 +11,10 @@ interface FormItemProps {
 }
 
 const FormItem: React.FC<FormItemProps> = ({ fieldValue, fieldPath }) => {
-  console.log(fieldPath)
-  if (fieldPath[fieldPath.length - 1] === 'Overrides') {
-    return <FormList name={fieldPath} subItems={['InstanceType', 'SubnetId']} />;
-  } else if (typeof fieldValue === 'boolean') {
+    console.log(fieldPath)
+    if (fieldPath[fieldPath.length - 1] === 'Overrides') {
+        return <FormList name={fieldPath} subItems={['InstanceType', 'SubnetId']} />;
+    } else if (typeof fieldValue === 'boolean') {
     return (
       <Form.Item name={fieldPath}>
         <BooleanSelector label={fieldPath[fieldPath.length - 1]} name={fieldPath} />

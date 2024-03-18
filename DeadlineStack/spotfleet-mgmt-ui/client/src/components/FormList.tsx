@@ -2,12 +2,12 @@ import React from "react";
 import { Button, Form, Input, Space, Typography } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
-interface OverridesListProps {
+interface FormListProps {
   name: (string | number)[];
   subItems: string[]; // Array of subitem names
 }
 
-const FormList: React.FC<OverridesListProps> = ({ name, subItems }) => (
+const FormList: React.FC<FormListProps> = ({ name, subItems }) => (
   <>
     <Typography.Title level={5}>{name[name.length - 1]}</Typography.Title>
     <Form.List name={name}>
