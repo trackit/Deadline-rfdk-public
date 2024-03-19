@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Input, Typography, InputNumber, Button } from "antd";
+import { Form, Input, Typography, InputNumber, Button, Space } from "antd";
 import BooleanSelector from "./BooleanSelector";
 import { PlusOutlined } from "@ant-design/icons";
 
@@ -18,7 +18,7 @@ const BlockDeviceMappings: React.FC<BlockDeviceMappingsProps> = ({ path, subItem
                 {(fields, { add, remove }) => (
                     <>
                         {fields.map(({ key, name, ...restField }) => (
-                            <>
+                            <div key={key} style={{ marginBottom: '16px' }}>
                                 <Form.Item label={subItems[0]} name={[name, subItems[0]]} >
                                     <Input />
                                 </Form.Item>
@@ -34,7 +34,7 @@ const BlockDeviceMappings: React.FC<BlockDeviceMappingsProps> = ({ path, subItem
                                     <Input />
                                 </Form.Item>
                                 <Button onClick={() => remove(name)}>Remove</Button>
-                            </>
+                            </div>
                         ))}
                         <Form.Item>
                             <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
