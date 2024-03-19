@@ -4,8 +4,6 @@ import InputField from './InputField';
 import FormList from './FormList';
 import BooleanSelector from './BooleanSelector';
 import BlockDeviceMappings from './BlockDeviceMappings';
-import CustomTagInput from './CustomTagInput';
-
 
 interface FormItemProps {
   fieldValue: any;
@@ -13,6 +11,8 @@ interface FormItemProps {
 }
 
 const FormItem: React.FC<FormItemProps> = ({ fieldValue, fieldPath }) => {
+  if (fieldPath[fieldPath.length - 1] === 'BlockDeviceMappings')
+    return <BlockDeviceMappings path={fieldPath} subItems={['DeviceName', 'Ebs']} />;
   if (fieldPath[fieldPath.length - 1] === 'Overrides')
     return <FormList name={fieldPath} subItems={['InstanceType', 'SubnetId']} />;
   if (typeof fieldValue === 'boolean')
