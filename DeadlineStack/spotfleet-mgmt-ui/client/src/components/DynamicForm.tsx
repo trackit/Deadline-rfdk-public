@@ -117,7 +117,7 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
     Object.keys(updatedValues).forEach((fleetName) => {
       let updatedFleetName = fleetName;
 
-      if (updatedValues[fleetName].FleetName) {
+      if (updatedValues[fleetName].FleetName && fleetName !== updatedValues[fleetName].FleetName) {
         updatedFleetName = updatedValues[updatedFleetName].FleetName;
         updatedValues = updateFleetName(fleetName, updatedValues[fleetName].FleetName, updatedValues);
       }

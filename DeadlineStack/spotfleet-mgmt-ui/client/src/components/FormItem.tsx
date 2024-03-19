@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form,Switch } from 'antd';
+import { Form } from 'antd';
 import InputField from './InputField';
 import FormList from './FormList';
 import BooleanSelector from './BooleanSelector';
@@ -12,7 +12,9 @@ interface FormItemProps {
   fieldPath: any[];
 }
 
-const FormItem: React.FC<FormItemProps> = ({ fieldValue, fieldPath}) => {
+const FormItem: React.FC<FormItemProps> = ({ fieldValue, fieldPath }) => {
+  if (fieldPath[fieldPath.length - 1] === 'Overrides')
+    return <FormList name={fieldPath} subItems={['InstanceType', 'SubnetId']} />;
   if (typeof fieldValue === 'boolean')
     return (
       <Form.Item name={fieldPath}>
