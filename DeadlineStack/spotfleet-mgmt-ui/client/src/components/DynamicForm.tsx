@@ -20,14 +20,13 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
     setFormValues(formData);
     setSubmittedValues(formData);
   }, [formData]);
+
   interface InstanceTypeMap {
     [key: string]: {
       InstanceType: string;
       SubnetIds: string[];
     };
   }
-
-
 
   const handlePanelChange = (key: string | string[]) => {
     setActiveKey(key);
