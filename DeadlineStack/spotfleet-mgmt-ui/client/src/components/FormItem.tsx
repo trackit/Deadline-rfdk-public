@@ -1,17 +1,14 @@
 import React from 'react';
-import { Form,Switch } from 'antd';
+import { Form } from 'antd';
 import InputField from './InputField';
-import FormList from './FormList';
 import BooleanSelector from './BooleanSelector';
-import BlockDeviceMappings from './BlockDeviceMappings';
-
 
 interface FormItemProps {
   fieldValue: any;
   fieldPath: any[];
 }
 
-const FormItem: React.FC<FormItemProps> = ({ fieldValue, fieldPath}) => {
+const FormItem: React.FC<FormItemProps> = ({ fieldValue, fieldPath }) => {
   if (typeof fieldValue === 'boolean')
     return (
       <Form.Item name={fieldPath}>

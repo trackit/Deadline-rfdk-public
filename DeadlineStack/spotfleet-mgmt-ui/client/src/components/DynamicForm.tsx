@@ -10,7 +10,6 @@ import TagSpecifications from './TagSpecifications';
 import LaunchTemplateConfigs from './LaunchTemplateConfigs';
 import InputFleetName from './InputFleetName';
 
-
 const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
   const [submittedValues, setSubmittedValues] = useState<any>(null);
   const [activeKey, setActiveKey] = useState<string | string[]>([]);
@@ -32,7 +31,7 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
     setFormValues(updatedFormValues);
     onDataUpdate(updatedFormValues)
   };
-  
+
   const handleAllocationStrategyChange = (fleetName: string, allocationStrategy: string) => {
     setFormValues(prevFormValues => ({
       ...prevFormValues,
@@ -141,6 +140,7 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
         updatedValues[updatedFleetName].LaunchTemplateConfigs = formValues[fleetName].LaunchTemplateConfigs;
       updatedValues[updatedFleetName].LaunchSpecifications = formValues[fleetName].LaunchSpecifications;
     });
+
     onDataUpdate(updatedValues);
     setSubmittedValues(updatedValues);
   };
@@ -193,7 +193,7 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
           <BooleanSelector label="TerminateInstancesWithExpiration" name={[fleetName, 'TerminateInstancesWithExpiration']} />
           <Typography.Title level={5}>Worker maximum capacity</Typography.Title>
           <Form.Item name={[fleetName, 'TargetCapacity']} >
-            <InputNumber min={0} variant="filled" style={{ width: 120 }}/>
+            <InputNumber min={0} variant="filled" style={{ width: 120 }} />
           </Form.Item>
           <BooleanSelector label="ReplaceUnhealthyInstances" name={[fleetName, 'ReplaceUnhealthyInstances']} />
           <DropDownSelector label="Type" name={[fleetName, 'Type']} items={TypeValue} />
@@ -207,18 +207,18 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
             <Form.Item>
               <Button onClick={() => handleExport()} >Export</Button>
             </Form.Item>
-           <Form.Item>
-           <Popconfirm
-            title="Delete the fleet"
-            description="Are you sure to delete this fleet?"
-            onConfirm={() => handleDeleteFleet(fleetName)}
-            icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-            okText="Yes"
-            cancelText="No"
-            >
-          <Button danger>Delete</Button>
-          </Popconfirm>
-           </Form.Item>
+            <Form.Item>
+              <Popconfirm
+                title="Delete the fleet"
+                description="Are you sure to delete this fleet?"
+                onConfirm={() => handleDeleteFleet(fleetName)}
+                icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button danger>Delete</Button>
+              </Popconfirm>
+            </Form.Item>
           </Space>
         </Form>
       </div>

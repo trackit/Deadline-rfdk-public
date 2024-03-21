@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LaunchTemplateConfig, LaunchTemplateSpecification, Override } from '../interface';
+import { LaunchTemplateConfig, LaunchTemplateSpecification } from '../interface';
 import { Input, Typography } from 'antd';
 import Overrides from './Overrides';
 
