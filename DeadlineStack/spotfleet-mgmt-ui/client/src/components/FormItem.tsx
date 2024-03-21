@@ -3,24 +3,23 @@ import { Form,Switch } from 'antd';
 import InputField from './InputField';
 import FormList from './FormList';
 import BooleanSelector from './BooleanSelector';
+import BlockDeviceMappings from './BlockDeviceMappings';
+import CustomTagInput from './CustomTagInput';
 
 
 interface FormItemProps {
   fieldValue: any;
-  fieldPath: (string | number)[];
+  fieldPath: any[];
 }
 
-const FormItem: React.FC<FormItemProps> = ({ fieldValue, fieldPath }) => {
-    console.log(fieldPath)
-    if (fieldPath[fieldPath.length - 1] === 'Overrides') {
-        return <FormList name={fieldPath} subItems={['InstanceType', 'SubnetId']} />;
-    } else if (typeof fieldValue === 'boolean') {
+const FormItem: React.FC<FormItemProps> = ({ fieldValue, fieldPath}) => {
+  if (typeof fieldValue === 'boolean')
     return (
       <Form.Item name={fieldPath}>
         <BooleanSelector label={fieldPath[fieldPath.length - 1]} name={fieldPath} />
       </Form.Item>
     );
-  } else if (typeof fieldValue === 'object') {
+  if (typeof fieldValue === 'object')
     return (
       <div>
         {Object.entries(fieldValue).map(([fieldName, nestedFieldValue]) => (
@@ -30,16 +29,14 @@ const FormItem: React.FC<FormItemProps> = ({ fieldValue, fieldPath }) => {
         ))}
       </div>
     );
-  } else {
-    return (
-      <InputField
-        title={`Setup ${fieldPath[fieldPath.length - 1].toString()}`}
-        sentence=""
-        placeholder={`${fieldPath[fieldPath.length - 1].toString()}`} 
-        name ={fieldPath}
-      />
-    );
-  }
+  return (
+    <InputField
+      title={`Setup ${fieldPath[fieldPath.length - 1].toString()}`}
+      sentence=""
+      placeholder={`${fieldPath[fieldPath.length - 1].toString()}`}
+      name={fieldPath}
+    />
+  );
 };
 
 export default FormItem;

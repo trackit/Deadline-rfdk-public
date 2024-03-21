@@ -22,3 +22,8 @@ code {
   white-space: pre-wrap;
   overflow: auto;
 }
+
+.ant-collapse-header {
+  background-color: white !important;
+  border: 1px solid #f6f4f4;
+}
