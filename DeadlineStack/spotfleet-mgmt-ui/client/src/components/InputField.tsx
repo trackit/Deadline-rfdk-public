@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Form, Input, Typography } from 'antd';
 
 interface InputFieldProps {
-  title: string;
-  sentence: string;
-  placeholder: string;
+  title?: string;
+  sentence?: string;
+  placeholder?: string;
   initialValue?: string;
   name: (string | number)[];
 }
@@ -21,7 +21,7 @@ const InputField: React.FC<InputFieldProps> = ({ title, sentence, placeholder, i
       <Typography.Title level={5}>{title}</Typography.Title>
       <p>{sentence}</p>
       <Form.Item name={name}>
-      <Input placeholder={placeholder} value={value} onChange={handleChange} />
+      <Input placeholder={placeholder} variant='filled' value={value} onChange={handleChange} defaultValue={value} />
       </Form.Item>
     </div>
   );

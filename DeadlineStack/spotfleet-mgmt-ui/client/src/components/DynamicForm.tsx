@@ -1,98 +1,91 @@
-import React, { useState } from 'react';
-import { Form, Input, Button, Card, Switch, notification, InputNumber, Typography, Collapse, Space } from 'antd';
-import { ArrowUpOutlined, CaretRightOutlined, DownCircleOutlined, UpCircleOutlined } from '@ant-design/icons';
-import { FleetFormProps } from '../interface'
+import React, { useEffect, useState } from 'react';
+import { Form, Input, Button, Card, Switch, notification, InputNumber, Typography, Collapse, Space, Affix } from 'antd';
+import { ArrowUpOutlined} from '@ant-design/icons';
+import { Fleet, FleetFormProps } from '../interface'
 import FormItem from './FormItem';
 import InputField from './InputField';
 import BooleanSelector from './BooleanSelector';
 import DropDownSelector from './DropDownSelector';
 import { AllocationStrategyValue, TypeValue } from '../data/ItemsValues';
-import FormList from './FormList';
+import TagSpecifications from './TagSpecifications';
+import { handleExport } from '../utils/fleet';
+import LaunchTemplateConfigs from './LaunchTemplateConfigs';
 
-const { Panel } = Collapse;
+
 
 const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
-  const [expandedFleet, setExpandedFleet] = useState<string | null>(null);
   const [submittedValues, setSubmittedValues] = useState<any>(null);
+  const [activeKey, setActiveKey] = useState<string | string[]>([]);
 
-  const handleFleetSetup = (fleetName: string) => {
-    setExpandedFleet(expandedFleet === fleetName ? null : fleetName);
+  const [formValues, setFormValues] = useState<Fleet>(formData);
+
+  useEffect(() => {
+    setFormValues(formData);
+    setSubmittedValues(formData);
+  }, [formData]);
+  interface InstanceTypeMap {
+    [key: string]: {
+        InstanceType: string;
+        SubnetIds: string[];
+    };
+}
+
+
+
+  const handlePanelChange = (key: string | string[]) => {
+    setActiveKey(key);
   };
-  
-  const onFinish = (values: any) => {
 
-    console.log('values',values)
-    const updatedValues = { ...formData, ...values};
-    Object.keys(updatedValues).forEach((fleetName) => {
-      if (updatedValues[fleetName].LaunchSpecifications) {
-        updatedValues[fleetName].LaunchSpecifications.forEach((specification: any) => {
-          if (specification.InstanceType && typeof specification.InstanceType === 'string') {
-            
-            const instanceTypes = specification.InstanceType.split(' ').map((type: string) => type.trim());
-            console.log(instanceTypes)
-            delete specification.InstanceType;
-            instanceTypes.forEach((instanceType: string) => {
-              const newSpecification = { ...specification, InstanceType: instanceType };
-              updatedValues[fleetName].LaunchSpecifications.push(newSpecification);
-            });
-            updatedValues[fleetName].LaunchSpecifications = updatedValues[fleetName].LaunchSpecifications.filter(
-              (spec: any) => spec.InstanceType !== undefined
-            );
-          }
-        });
+  const updateFleetName = (fleetName: string, newFleetName: string, updatedValues: any) => {
+    const fleetValues: any = {};
+
+    for (const key in updatedValues) {
+      if (!Object.prototype.hasOwnProperty.call(updatedValues, key))
+        continue;
+      if (key !== fleetName) {
+        fleetValues[key] = updatedValues[key];
+        continue;
       }
+      fleetValues[newFleetName] = updatedValues[key];
+    }
+    delete fleetValues[newFleetName].FleetName;
+    return fleetValues;
+  };
+  const onFinish = (values: any) => {
+    
+    let updatedValues = { ...formValues, ...values };
+    Object.keys(updatedValues).forEach((fleetName) => {
+      let updatedFleetName = fleetName;
+
+      if (updatedValues[fleetName].FleetName) {
+        updatedFleetName = updatedValues[updatedFleetName].FleetName;
+        updatedValues = updateFleetName(fleetName, updatedValues[fleetName].FleetName, updatedValues);
+      }
+
     });
+    
     onDataUpdate(updatedValues);
     setSubmittedValues(updatedValues);
-    
-};
-const handleExport = () => {
-  if (submittedValues) {
-    const json = JSON.stringify(submittedValues, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'form_data.json';
-    document.body.appendChild(link);
-    link.click();
-    // Clean up
-    URL.revokeObjectURL(url);
-    document.body.removeChild(link);
-  } else {
-    notification.error({
-      message: 'No form data submitted',
-      description: 'Please submit the form data before exporting.',
-    });
-  }
-};
-const collapseItems = Object.entries(formData).map(([fleetName, fleet], index_collapse) => ({
+  };
+  
+
+const collapseItems = Object.entries(formValues).map(([fleetName, fleet], index_collapse) => ({
     key: fleetName,
-    label: `Fleet ${index_collapse + 1}`,
+    label: fleetName,
     children: (
-    <Form onFinish={onFinish} initialValues={formData}>
+        <div style={{ maxHeight: '500px', overflow: 'auto' }}>
+        <Form onFinish={onFinish} initialValues={formValues}>
         <InputField
           title="Setup your fleet"
           sentence="Edit your fleet name"
           placeholder="Fleet name"
+          initialValue={fleetName}
           name={[fleetName, 'FleetName']}
+          
         />
-        {fleet.LaunchSpecifications?.length > 0 ? (
+        {fleet.LaunchTemplateConfigs?.length > 0 ? (
           <>
-            {fleet.LaunchSpecifications.map((specification, index) => (
-              <div key={index}>
-                <FormItem fieldValue={specification} fieldPath={[fleetName, 'LaunchSpecifications', index]} />
-              </div>
-            ))}
-          </>
-        ) : fleet.LaunchTemplateConfigs?.length > 0 ? (
-          <>
-            <BooleanSelector label={'Linux'} name={[]} />
-            {fleet.LaunchTemplateConfigs.map((config, index) => (
-              <div key={index}>
-                <FormItem fieldValue={config} fieldPath={[fleetName, 'LaunchTemplateConfigs', index]} />
-              </div>
-            ))}
+           <LaunchTemplateConfigs configs={fleet.LaunchTemplateConfigs} fleetName={fleetName}/>
           </>
         ) : null}
         <BooleanSelector label="TerminateInstancesWithExpiration" name={[fleetName, 'TerminateInstancesWithExpiration']} />
@@ -101,32 +94,42 @@ const collapseItems = Object.entries(formData).map(([fleetName, fleet], index_co
         <DropDownSelector label="Type" name={[fleetName, 'Type']} items={TypeValue} />
         <Typography.Title level={5}>Worker maximum capacity</Typography.Title>
         <Form.Item name={[fleetName, 'TargetCapacity']} >
-          <InputNumber min={1} max={10} />
+          <InputNumber min={0} variant="filled" style={{ width: 120 }}/>
         </Form.Item>
         <Form.Item >
-        <FormList name={[fleetName, 'TagSpecifications']} subItems={['ResourceType', 'Tags']} />
+        <TagSpecifications name={[fleetName, 'TagSpecifications']} subItems={['ResourceType', 'Tags']} />
+        </Form.Item>
+       
+       <Space>
+        <Form.Item>
+            <Button type="primary" htmlType="submit"  >Submit</Button>
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit">Submit</Button>
-          <Button onClick={handleExport}>Export</Button>
+            <Button onClick={() => handleExport(submittedValues)} >Export</Button>
         </Form.Item>
+       </Space>
       </Form>
+      </div>
     ),
   }));
 
   return (
+   
     <Space direction="vertical" size="small" style={{ display: 'flex' }}>
     {collapseItems.map(({ key, label, children }) => (
+
       <Collapse
         key={key}
         accordion
+        activeKey={activeKey}
+        onChange={handlePanelChange}
         expandIconPosition='end'
         expandIcon={({ isActive }) => <ArrowUpOutlined rotate={isActive ? 180 : 0} />}
         collapsible="header"
         items={[{ key, label, children }]}
       />
+      
     ))}
-
   </Space>
   );
 };
