@@ -35,7 +35,7 @@ interface Override {
     InstanceType: string;
 }
 
-interface LaunchTemplateConfig {
+export interface LaunchTemplateConfig {
     LaunchTemplateSpecification: LaunchTemplateSpecification;
     Overrides: Override[];
 }
