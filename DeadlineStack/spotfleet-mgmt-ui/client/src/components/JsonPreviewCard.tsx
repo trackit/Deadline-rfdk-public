@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Flex, notification } from 'antd';
 import JsonEditor from './JsonEditor';
+import '../style.css'
 
 interface JsonPreviewCardProps {
     data: Record<string, any>;
@@ -52,7 +53,13 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
     const getRenderedContent = (state: boolean) => {
         if (state)
             return <JsonEditor initialValue={formattedJson} onChange={handleJsonEditorChange} />;
-        return <pre>{formattedJson}</pre>;
+        return (
+            <div className="scrollable-content">
+            {/* <div style={{ whiteSpace: 'pre-wrap', height: '80vh', overflow:'auto' }}> */}
+                {formattedJson}
+            </div >
+        );
+
     };
 
     const downloadJson = () => {
@@ -98,15 +105,17 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
     };
 
     return (
-        <Card title="JSON Code preview" extra={
-            <Flex gap="small" wrap="wrap">
-                <Button type="default" onClick={() => handleEditClick(isEditing)}>{isEditing ? 'Save' : 'Edit'}</Button>
-                <Button type="default" onClick={uploadJson}>Upload</Button>
-                <Button type="primary" onClick={downloadJson}>Download</Button>
-            </Flex>
-        } style={{ overflow: 'auto' }}>
-            {getRenderedContent(isEditing)}
-        </Card>
+        <div className="card">
+            <Card title="JSON Code preview" extra={
+                <Flex gap="small" wrap="wrap">
+                    <Button type="default" onClick={() => handleEditClick(isEditing)}>{isEditing ? 'Save' : 'Edit'}</Button>
+                    <Button type="default" onClick={uploadJson}>Upload</Button>
+                    <Button type="primary" onClick={downloadJson}>Download</Button>
+                </Flex>
+            } style={{ height: '100%' }}>
+                {getRenderedContent(isEditing)}
+            </Card>
+        </div>
     );
 };
 export default JsonPreviewCard;
