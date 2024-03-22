@@ -9,7 +9,6 @@ import { AllocationStrategyValue, TypeValue } from '../data/ItemsValues';
 import TagSpecifications from './TagSpecifications';
 import LaunchTemplateConfigs from './LaunchTemplateConfigs';
 
-
 const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
   const [submittedValues, setSubmittedValues] = useState<any>(null);
   const [activeKey, setActiveKey] = useState<string | string[]>([]);
@@ -20,13 +19,6 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
     setFormValues(formData);
     setSubmittedValues(formData);
   }, [formData]);
-
-  interface InstanceTypeMap {
-    [key: string]: {
-      InstanceType: string;
-      SubnetIds: string[];
-    };
-  }
 
   const handlePanelChange = (key: string | string[]) => {
     setActiveKey(key);
