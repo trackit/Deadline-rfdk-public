@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Flex, notification } from 'antd';
 import JsonEditor from './JsonEditor';
-import '../style.css'
+import '../index.css'
 
 interface JsonPreviewCardProps {
     data: Record<string, any>;
@@ -43,7 +43,6 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
                 setFormattedJson(event.target.result as string);
         };
         reader.readAsText(selectedFile);
-
     }, [selectedFile]);
 
     const handleJsonEditorChange = (newValue: string) => {
@@ -55,7 +54,6 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
             return <JsonEditor initialValue={formattedJson} onChange={handleJsonEditorChange} />;
         return (
             <div className="scrollable-content">
-            {/* <div style={{ whiteSpace: 'pre-wrap', height: '80vh', overflow:'auto' }}> */}
                 {formattedJson}
             </div >
         );

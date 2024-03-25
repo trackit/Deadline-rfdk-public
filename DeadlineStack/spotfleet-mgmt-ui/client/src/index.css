@@ -11,3 +11,14 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.card {
+  height: 100%;
+  position: relative;
+}
+
+.scrollable-content {
+  height: 80vh;
+  white-space: pre-wrap;
+  overflow: auto;
+}
