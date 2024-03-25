@@ -181,7 +181,8 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
     key: fleetName,
     label: fleetName,
     children: (
-      <Form onFinish={onFinish} initialValues={formValues}>
+     <div style={{ height: '60vh', overflow: 'scroll', whiteSpace: 'pre-wrap' }}>
+       <Form onFinish={onFinish} initialValues={formValues}>
         <InputField
           title="Setup your fleet"
           sentence="Edit your fleet name"
@@ -208,6 +209,7 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
         </Form.Item>
        </Space>
       </Form>
+     </div>
     ),
   }));
 

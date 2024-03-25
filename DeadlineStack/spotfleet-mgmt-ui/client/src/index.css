@@ -17,6 +17,11 @@ code {
   position: relative;
 }
 
+.card {
+  height: 100%;
+  position: relative;
+}
+
 .scrollable-content {
   height: 80vh;
   white-space: pre-wrap;
