@@ -4,7 +4,6 @@ import InputField from './InputField';
 import FormList from './FormList';
 import BooleanSelector from './BooleanSelector';
 import BlockDeviceMappings from './BlockDeviceMappings';
-import CustomTagInput from './CustomTagInput';
 
 
 interface FormItemProps {

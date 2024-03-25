@@ -17,7 +17,16 @@ code {
   border: 1px solid #f6f4f4; 
 }
 
+.card {
+  height: 100%;
+  position: relative;
+}
 
+.scrollable-content {
+  height: 80vh;
+  white-space: pre-wrap;
+  overflow: auto;
+}
 
 
 

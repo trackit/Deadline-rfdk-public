@@ -82,14 +82,14 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
             if (!event.target?.result)
                 return;
             try {
-                const uploadedDAta = JSON.parse(event.target.result as string);
-                onDataUpdate(uploadedDAta);
+                JSON.parse(event.target.result as string);
             } catch (error) {
                 notification.open({
                     message: 'Invalid JSON format',
                     description: 'Please make sure the JSON is correctly formatted.',
                 });
                 setIsEditing(true);
+
             }
         };
         reader.readAsText(file);
