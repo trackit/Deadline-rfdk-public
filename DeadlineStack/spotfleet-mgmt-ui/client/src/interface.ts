@@ -25,14 +25,15 @@ interface LaunchSpecification {
     SubnetId: string;
 }
 
-interface LaunchTemplateSpecification {
-    Version: string;
+export interface LaunchTemplateSpecification {
     LaunchTemplateId: string;
+    Version: string;
 }
 
-interface Override {
-    SubnetId: string;
+export interface Override {
     InstanceType: string;
+    SubnetId: string | string[];
+    Priority: number;
 }
 
 export interface LaunchTemplateConfig {
@@ -68,6 +69,6 @@ export interface Fleet {
 }
 
 export interface FleetFormProps {
-  formData: Fleet;
-  onDataUpdate: (updatedData: Record<string, any>) => void;
+    formData: Fleet;
+    onDataUpdate: (updatedData: Record<string, any>) => void;
 }
