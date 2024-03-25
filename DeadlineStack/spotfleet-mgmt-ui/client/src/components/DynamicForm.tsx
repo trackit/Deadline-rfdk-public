@@ -194,7 +194,7 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
           {renderLaunchTemplateConfig(fleetName, formValues)}
           <BooleanSelector label="TerminateInstancesWithExpiration" name={[fleetName, 'TerminateInstancesWithExpiration']} />
           <BooleanSelector label="ReplaceUnhealthyInstances" name={[fleetName, 'ReplaceUnhealthyInstances']} />
-          <DropDownSelector label="AllocationStrategy" name={[fleetName, 'AllocationStrategy']} items={AllocationStrategyValue} />
+          <DropDownSelector label="AllocationStrategy" name={[fleetName, 'AllocationStrategy']} items={AllocationStrategyValue} onChange={(value) => handleAllocationStrategyChange(fleetName, value)} />
           <DropDownSelector label="Type" name={[fleetName, 'Type']} items={TypeValue} />
           <Typography.Title level={5}>Worker maximum capacity</Typography.Title>
           <Form.Item name={[fleetName, 'TargetCapacity']} >
