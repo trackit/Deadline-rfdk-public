@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { PlusOutlined } from '@ant-design/icons';
-import type { InputRef } from 'antd';
 import { Flex, Form, Input, Tag, theme, Tooltip } from 'antd';
+import type { InputRef } from 'antd';
 
 const tagInputStyle: React.CSSProperties = {
   width: 64,
@@ -10,11 +9,11 @@ const tagInputStyle: React.CSSProperties = {
   verticalAlign: 'top',
 };
 interface CustomTagInputProps {
-    title?: string;
-    name: any[];
-    initialValue?:any;
-  }
-const CustomTagInput: React.FC<CustomTagInputProps> = ({name, title, initialValue})=> {
+  title?: string;
+  name: any[];
+  initialValue?: any;
+}
+const CustomTagInput: React.FC<CustomTagInputProps> = ({ name, title, initialValue }) => {
   const { token } = theme.useToken();
   const [tags, setTags] = useState<string[]>(initialValue);
   const [inputVisible, setInputVisible] = useState(false);
@@ -36,7 +35,6 @@ const CustomTagInput: React.FC<CustomTagInputProps> = ({name, title, initialValu
 
   const handleClose = (removedTag: string) => {
     const newTags = tags.filter((tag) => tag !== removedTag);
-    console.log(newTags);
     setTags(newTags);
   };
 
@@ -121,18 +119,18 @@ const CustomTagInput: React.FC<CustomTagInputProps> = ({name, title, initialValu
         );
       })}
       {inputVisible ? (
-       <Form.Item name={name} initialValue={initialValue}>
-         <Input
-          ref={inputRef}
-          style={tagInputStyle}
-          value={inputValue}
-          onChange={handleInputChange}
-          onBlur={handleInputConfirm}
-          onPressEnter={handleInputConfirm}
-        />
-       </Form.Item>
+        <Form.Item name={name} initialValue={initialValue}>
+          <Input
+            ref={inputRef}
+            style={tagInputStyle}
+            value={inputValue}
+            onChange={handleInputChange}
+            onBlur={handleInputConfirm}
+            onPressEnter={handleInputConfirm}
+          />
+        </Form.Item>
       ) : (
-        <Tag style={tagPlusStyle}  onClick={showInput}>
+        <Tag style={tagPlusStyle} onClick={showInput}>
           Add Subnet
         </Tag>
       )}
