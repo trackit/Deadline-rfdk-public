@@ -25,6 +25,16 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
     setActiveKey(key);
   };
 
+  const handleAllocationStrategyChange = (fleetName: string, allocationStrategy: string) => {
+    setFormValues(prevFormValues => ({
+      ...prevFormValues,
+      [fleetName]: {
+        ...prevFormValues[fleetName],
+        AllocationStrategy: allocationStrategy,
+      },
+    }));
+  };
+
   const handleLaunchTemplateConfigChange = (fleetName: string, updatedValue: LaunchTemplateConfig) => {
     setLaunchTemplateConfig(prevState => {
       const newState = new Map<string, LaunchTemplateConfig>(prevState);
@@ -33,30 +43,31 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
     });
   };
 
-
   const getLaunchTemplateConfig = (fleetName: string, values: Fleet): LaunchTemplateConfig => {
     const overridesMap: { [key: string]: { InstanceType: string; SubnetIds: string[]; Priorities: number } } = {};
     const LaunchTemplateSpecification = { LaunchTemplateId: '', Version: '' };
+    const allOverrides: Override[] = [];
 
-    if (!values[fleetName].LaunchTemplateConfigs) return { LaunchTemplateSpecification: { LaunchTemplateId: '', Version: '' }, Overrides: [] };
+    if (!values[fleetName].LaunchTemplateConfigs) return { LaunchTemplateSpecification: LaunchTemplateSpecification, Overrides: [] };
+
     values[fleetName].LaunchTemplateConfigs.forEach((config: LaunchTemplateConfig) => {
       LaunchTemplateSpecification.LaunchTemplateId = config.LaunchTemplateSpecification.LaunchTemplateId;
       LaunchTemplateSpecification.Version = config.LaunchTemplateSpecification.Version;
+
       config.Overrides.forEach((override: Override) => {
         if (!overridesMap[override.InstanceType])
           overridesMap[override.InstanceType] = { InstanceType: override.InstanceType, SubnetIds: [], Priorities: override.Priority };
-        if (Array.isArray(override.SubnetId)) {
+
+        if (Array.isArray(override.SubnetId))
           override.SubnetId.forEach(subnet => {
             overridesMap[override.InstanceType].SubnetIds.push(subnet);
           });
-        } else {
+        else
           overridesMap[override.InstanceType].SubnetIds.push(override.SubnetId);
-        }
       });
       return config;
     });
 
-    const allOverrides: Override[] = [];
     for (const key in overridesMap) {
       if (!Object.prototype.hasOwnProperty.call(overridesMap, key))
         continue;
@@ -71,19 +82,19 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
     const allTemplateConfigs: LaunchTemplateConfig[] = [];
 
     updatedLaunchTemplateConfig.Overrides.forEach((override) => {
-      if (Array.isArray(override.SubnetId)) {
-        override.SubnetId.forEach((subnetId) => {
-          const newLaunchTemplateConfig: LaunchTemplateConfig = {
-            LaunchTemplateSpecification: updatedLaunchTemplateConfig.LaunchTemplateSpecification,
-            Overrides: [{
-              InstanceType: override.InstanceType,
-              SubnetId: subnetId,
-              Priority: override.Priority
-            }]
-          };
-          allTemplateConfigs.push(newLaunchTemplateConfig);
-        });
-      }
+      if (!Array.isArray(override.SubnetId))
+        return;
+      override.SubnetId.forEach((subnetId) => {
+        const newLaunchTemplateConfig: LaunchTemplateConfig = {
+          LaunchTemplateSpecification: updatedLaunchTemplateConfig.LaunchTemplateSpecification,
+          Overrides: [{
+            InstanceType: override.InstanceType,
+            SubnetId: subnetId,
+            Priority: override.Priority
+          }]
+        };
+        allTemplateConfigs.push(newLaunchTemplateConfig);
+      });
     });
     values[fleetName].LaunchTemplateConfigs = allTemplateConfigs;
   };
@@ -138,6 +149,7 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
     setSubmittedValues(updatedValues);
 
   };
+
   const handleExport = () => {
     if (submittedValues) {
       const json = JSON.stringify(submittedValues, null, 2);
@@ -156,16 +168,6 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
         description: 'Please submit the form data before exporting.',
       });
     }
-  };
-
-  const handleAllocationStrategyChange = (fleetName: string, allocationStrategy: string) => {
-    setFormValues(prevFormValues => ({
-      ...prevFormValues,
-      [fleetName]: {
-        ...prevFormValues[fleetName],
-        AllocationStrategy: allocationStrategy,
-      },
-    }));
   };
 
   const renderLaunchTemplateConfig = (fleetName: string, values: Fleet) => {
