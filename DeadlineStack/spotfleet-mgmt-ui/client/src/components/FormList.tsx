@@ -1,7 +1,6 @@
 import React from "react";
 import { Button, Form, Input, Space, Typography } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import CustomTagInput from "./CustomTagInput";
 
 interface FormListProps {
   name: any[];
