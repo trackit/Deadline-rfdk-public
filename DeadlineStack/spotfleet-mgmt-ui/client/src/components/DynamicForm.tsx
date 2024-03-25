@@ -193,6 +193,11 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
             name={[fleetName, 'FleetName']}
 
           />
+          <InputField
+            title='IamFleetRole'
+            name={[fleetName, 'IamFleetRole']}
+            placeholder="IamFleetRole"
+          />
           {renderLaunchTemplateConfig(fleetName, formValues)}
           <BooleanSelector label="TerminateInstancesWithExpiration" name={[fleetName, 'TerminateInstancesWithExpiration']} />
           <BooleanSelector label="ReplaceUnhealthyInstances" name={[fleetName, 'ReplaceUnhealthyInstances']} />
