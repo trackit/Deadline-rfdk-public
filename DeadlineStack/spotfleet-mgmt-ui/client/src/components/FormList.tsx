@@ -27,7 +27,7 @@ const FormList: React.FC<FormListProps> = ({ name, subItems }) => {
                   {subItem === 'InstanceType' ? (
                     <Input placeholder={subItem} />
                   ) : (
-                    <Input />
+                    <Input variant='filled' />
                   )}
                 </Form.Item>
               ))}
