@@ -82,14 +82,14 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
             if (!event.target?.result)
                 return;
             try {
-                JSON.parse(event.target.result as string);
+                const uploadedDAta = JSON.parse(event.target.result as string);
+                onDataUpdate(uploadedDAta);
             } catch (error) {
                 notification.open({
                     message: 'Invalid JSON format',
                     description: 'Please make sure the JSON is correctly formatted.',
                 });
                 setIsEditing(true);
-
             }
         };
         reader.readAsText(file);
@@ -108,16 +108,16 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
     };
 
     return (
-        <div className="card">
+        <div className='card'>
             <Card title="JSON Code preview" extra={
-                <Flex gap="small" wrap="wrap">
-                    <Button type="default" onClick={() => handleEditClick(isEditing)}>{isEditing ? 'Save' : 'Edit'}</Button>
-                    <Button type="default" onClick={uploadJson}>Upload</Button>
-                    <Button type="primary" onClick={downloadJson}>Download</Button>
-                </Flex>
-            } style={{ height: '100%' }}>
-                {getRenderedContent(isEditing)}
-            </Card>
+            <Flex gap="small" wrap="wrap">
+                <Button type="default" onClick={() => handleEditClick(isEditing)}>{isEditing ? 'Save' : 'Edit'}</Button>
+                <Button type="default" onClick={uploadJson}>Upload</Button>
+                <Button type="primary" onClick={downloadJson}>Download</Button>
+            </Flex>
+        } style={{ height : '100%'}}>
+            {getRenderedContent(isEditing)}
+        </Card>
         </div>
     );
 };
