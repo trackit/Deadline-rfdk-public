@@ -171,7 +171,7 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
     label: fleetName,
     children: (
       <div style={{ maxHeight: '500px', overflow: 'auto' }}>
-        <Form onFinish={onFinish} initialValues={formValues}>
+        <Form key={JSON.stringify(formValues)} onFinish={onFinish} initialValues={formValues}>
           <InputField
             title="Setup your fleet"
             sentence="Edit your fleet name"
