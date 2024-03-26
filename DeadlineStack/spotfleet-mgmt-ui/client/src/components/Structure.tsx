@@ -15,14 +15,14 @@ const Structure: React.FC<StructureProps> = ({ data }) => {
         setData(updatedData);
     };
     return (
-        <div style={{ padding: '16px' }}>
-            <Title level={3}>SFMT</Title>
-            <Row gutter={16}>
-                <Col span={10}>
+        <div style={{ height: '96%', padding: '16px' }}>
+            <Title level={3} style={{ margin: 0 }}>SFMT</Title>
+            <Row gutter={16} style={{ height: '94%' }}>
+                <Col lg={10} sm={24}>
                     {/* Add fleet configuration here */}
                 </Col>
-                <Col span={14}>
-                    <JsonPreviewCard data={jsonData} onDataUpdate={updateData}/>
+                <Col lg={14} sm={24}>
+                    <JsonPreviewCard data={jsonData} onDataUpdate={updateData} />
                 </Col>
             </Row>
         </div>

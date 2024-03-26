@@ -6,7 +6,9 @@ import fleetData from './data/config';
 function App() {
 
   return (
-    <Structure data={fleetData} />
+    <div style={{ height: '100vh' }}>
+      <Structure data={fleetData} />
+    </div>
   );
 }
 export default App;
