@@ -8,6 +8,7 @@ import DropDownSelector from './DropDownSelector';
 import { AllocationStrategyValue, TypeValue } from '../data/ItemsValues';
 import TagSpecifications from './TagSpecifications';
 import LaunchTemplateConfigs from './LaunchTemplateConfigs';
+import InputFleetName from './InputFleetName';
 
 
 const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
@@ -25,6 +26,16 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
     setActiveKey(key);
   };
 
+  const handleAllocationStrategyChange = (fleetName: string, allocationStrategy: string) => {
+    setFormValues(prevFormValues => ({
+      ...prevFormValues,
+      [fleetName]: {
+        ...prevFormValues[fleetName],
+        AllocationStrategy: allocationStrategy,
+      },
+    }));
+  };
+
   const handleLaunchTemplateConfigChange = (fleetName: string, updatedValue: LaunchTemplateConfig) => {
     setLaunchTemplateConfig(prevState => {
       const newState = new Map<string, LaunchTemplateConfig>(prevState);
@@ -33,30 +44,33 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
     });
   };
 
-
   const getLaunchTemplateConfig = (fleetName: string, values: Fleet): LaunchTemplateConfig => {
     const overridesMap: { [key: string]: { InstanceType: string; SubnetIds: string[]; Priorities: number } } = {};
     const LaunchTemplateSpecification = { LaunchTemplateId: '', Version: '' };
+    const allOverrides: Override[] = [];
 
-    if (!values[fleetName].LaunchTemplateConfigs) return { LaunchTemplateSpecification: { LaunchTemplateId: '', Version: '' }, Overrides: [] };
+    if (!values[fleetName].LaunchTemplateConfigs)
+      return { LaunchTemplateSpecification: LaunchTemplateSpecification, Overrides: [] };
+
     values[fleetName].LaunchTemplateConfigs.forEach((config: LaunchTemplateConfig) => {
       LaunchTemplateSpecification.LaunchTemplateId = config.LaunchTemplateSpecification.LaunchTemplateId;
       LaunchTemplateSpecification.Version = config.LaunchTemplateSpecification.Version;
+
       config.Overrides.forEach((override: Override) => {
         if (!overridesMap[override.InstanceType])
           overridesMap[override.InstanceType] = { InstanceType: override.InstanceType, SubnetIds: [], Priorities: override.Priority };
+
         if (Array.isArray(override.SubnetId)) {
           override.SubnetId.forEach(subnet => {
             overridesMap[override.InstanceType].SubnetIds.push(subnet);
           });
-        } else {
-          overridesMap[override.InstanceType].SubnetIds.push(override.SubnetId);
+          return;
         }
+        overridesMap[override.InstanceType].SubnetIds.push(override.SubnetId);
       });
       return config;
     });
 
-    const allOverrides: Override[] = [];
     for (const key in overridesMap) {
       if (!Object.prototype.hasOwnProperty.call(overridesMap, key))
         continue;
@@ -71,19 +85,19 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
     const allTemplateConfigs: LaunchTemplateConfig[] = [];
 
     updatedLaunchTemplateConfig.Overrides.forEach((override) => {
-      if (Array.isArray(override.SubnetId)) {
-        override.SubnetId.forEach((subnetId) => {
-          const newLaunchTemplateConfig: LaunchTemplateConfig = {
-            LaunchTemplateSpecification: updatedLaunchTemplateConfig.LaunchTemplateSpecification,
-            Overrides: [{
-              InstanceType: override.InstanceType,
-              SubnetId: subnetId,
-              Priority: override.Priority
-            }]
-          };
-          allTemplateConfigs.push(newLaunchTemplateConfig);
-        });
-      }
+      if (!Array.isArray(override.SubnetId))
+        return;
+      override.SubnetId.forEach((subnetId) => {
+        const newLaunchTemplateConfig: LaunchTemplateConfig = {
+          LaunchTemplateSpecification: updatedLaunchTemplateConfig.LaunchTemplateSpecification,
+          Overrides: [{
+            InstanceType: override.InstanceType,
+            SubnetId: subnetId,
+            Priority: override.Priority
+          }]
+        };
+        allTemplateConfigs.push(newLaunchTemplateConfig);
+      });
     });
     values[fleetName].LaunchTemplateConfigs = allTemplateConfigs;
   };
@@ -107,37 +121,23 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
   const onFinish = (values: any) => {
     let updatedValues = { ...formValues, ...values };
     Object.keys(updatedValues).forEach((fleetName) => {
+      const newLaunchTemplateConfig = launchTemplateConfig.get(fleetName);
       let updatedFleetName = fleetName;
 
       if (updatedValues[fleetName].FleetName) {
         updatedFleetName = updatedValues[updatedFleetName].FleetName;
         updatedValues = updateFleetName(fleetName, updatedValues[fleetName].FleetName, updatedValues);
       }
-
-      const newLaunchTemplateConfig = launchTemplateConfig.get(updatedFleetName);
       if (newLaunchTemplateConfig)
         updateLaunchTemplateConfig(updatedFleetName, updatedValues, newLaunchTemplateConfig);
-      if (!updatedValues[updatedFleetName].LaunchSpecifications)
-        return;
-      updatedValues[updatedFleetName].LaunchSpecifications.forEach((specification: any) => {
-        if (!specification.InstanceType && typeof specification.InstanceType === 'string')
-          return;
-        const instanceTypes = specification.InstanceType.split(' ').map((type: string) => type.trim());
-        delete specification.InstanceType;
-        instanceTypes.forEach((instanceType: string) => {
-          const newSpecification = { ...specification, InstanceType: instanceType };
-          updatedValues[updatedFleetName].LaunchSpecifications.push(newSpecification);
-        });
-        updatedValues[updatedFleetName].LaunchSpecifications = updatedValues[updatedFleetName].LaunchSpecifications.filter(
-          (spec: any) => spec.InstanceType !== undefined
-        );
-      });
+      else
+        updatedValues[updatedFleetName].LaunchTemplateConfigs = formValues[fleetName].LaunchTemplateConfigs;
+      updatedValues[updatedFleetName].LaunchSpecifications = formValues[fleetName].LaunchSpecifications;
     });
-
     onDataUpdate(updatedValues);
     setSubmittedValues(updatedValues);
-
   };
+
   const handleExport = () => {
     if (submittedValues) {
       const json = JSON.stringify(submittedValues, null, 2);
@@ -158,16 +158,6 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
     }
   };
 
-  const handleAllocationStrategyChange = (fleetName: string, allocationStrategy: string) => {
-    setFormValues(prevFormValues => ({
-      ...prevFormValues,
-      [fleetName]: {
-        ...prevFormValues[fleetName],
-        AllocationStrategy: allocationStrategy,
-      },
-    }));
-  };
-
   const renderLaunchTemplateConfig = (fleetName: string, values: Fleet) => {
     const isPrioritized = values[fleetName].AllocationStrategy === 'capacityOptimizedPrioritized';
     const fleetLaunchTemplateConfig = getLaunchTemplateConfig(fleetName, values);
@@ -177,39 +167,42 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
     );
   }
 
-  const collapseItems = Object.entries(formValues).map(([fleetName, fleet], index_collapse) => ({
+  const collapseItems = Object.entries(formValues).map(([fleetName, fleet]) => ({
     key: fleetName,
     label: fleetName,
     children: (
-     <div style={{ height: '60vh', overflow: 'scroll', whiteSpace: 'pre-wrap' }}>
-       <Form onFinish={onFinish} initialValues={formValues}>
-        <InputField
-          title="Setup your fleet"
-          sentence="Edit your fleet name"
-          placeholder="Fleet name"
-          initialValue={fleetName}
-          name={[fleetName, 'FleetName']}
-        />
-        {renderLaunchTemplateConfig(fleetName, formValues)}
-        <BooleanSelector label="TerminateInstancesWithExpiration" name={[fleetName, 'TerminateInstancesWithExpiration']} />
-        <BooleanSelector label="ReplaceUnhealthyInstances" name={[fleetName, 'ReplaceUnhealthyInstances']} />
-        <DropDownSelector label="AllocationStrategy" name={[fleetName, 'AllocationStrategy']} items={AllocationStrategyValue} onChange={(value) => handleAllocationStrategyChange(fleetName, value)} />
-        <DropDownSelector label="Type" name={[fleetName, 'Type']} items={TypeValue} />
-        <Typography.Title level={5}>Worker maximum capacity</Typography.Title>
-        <Form.Item name={[fleetName, 'TargetCapacity']} >
-          <InputNumber min={1} />
-        </Form.Item>
-        <TagSpecifications name={[fleetName, 'TagSpecifications']} subItems={['ResourceType', 'Tags']} />
-       <Space>
-       <Form.Item>
-          <Button type="primary" htmlType="submit">Submit</Button>
-        </Form.Item>
-        <Form.Item>
-        <Button  onClick={handleExport}>Export</Button>
-        </Form.Item>
-       </Space>
-      </Form>
-     </div>
+      <div style={{ maxHeight: '500px', overflow: 'auto' }}>
+        <Form key={JSON.stringify(formValues)} onFinish={onFinish} initialValues={formValues}>
+          <InputFleetName
+            title="Setup your fleet"
+            sentence="Edit your fleet name"
+            placeholder="Fleet name"
+            initialValue={fleetName}
+            name={[fleetName, 'FleetName']}
+          />
+          <DropDownSelector label="AllocationStrategy" name={[fleetName, 'AllocationStrategy']} items={AllocationStrategyValue} onChange={(value) => handleAllocationStrategyChange(fleetName, value)} />
+          <InputField title='IamFleetRole' name={[fleetName, 'IamFleetRole']} placeholder="IamFleetRole" />
+          {renderLaunchTemplateConfig(fleetName, formValues)}
+          <BooleanSelector label="TerminateInstancesWithExpiration" name={[fleetName, 'TerminateInstancesWithExpiration']} />
+          <Typography.Title level={5}>Worker maximum capacity</Typography.Title>
+          <Form.Item name={[fleetName, 'TargetCapacity']} >
+            <InputNumber min={0} variant="filled" style={{ width: 120 }}/>
+          </Form.Item>
+          <BooleanSelector label="ReplaceUnhealthyInstances" name={[fleetName, 'ReplaceUnhealthyInstances']} />
+          <DropDownSelector label="Type" name={[fleetName, 'Type']} items={TypeValue} />
+          <Form.Item >
+            <TagSpecifications name={[fleetName, 'TagSpecifications']} subItems={['ResourceType', 'Tags']} />
+          </Form.Item>
+          <Space>
+            <Form.Item>
+              <Button type="primary" htmlType="submit"  >Submit</Button>
+            </Form.Item>
+            <Form.Item>
+              <Button onClick={() => handleExport()} >Export</Button>
+            </Form.Item>
+          </Space>
+        </Form>
+      </div>
     ),
   }));
 
