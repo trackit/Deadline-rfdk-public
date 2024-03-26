@@ -140,7 +140,6 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
         updatedValues[updatedFleetName].LaunchTemplateConfigs = formValues[fleetName].LaunchTemplateConfigs;
       updatedValues[updatedFleetName].LaunchSpecifications = formValues[fleetName].LaunchSpecifications;
     });
-
     onDataUpdate(updatedValues);
     setSubmittedValues(updatedValues);
   };
