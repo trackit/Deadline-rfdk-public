@@ -17,8 +17,36 @@ code {
   position: relative;
 }
 
+.card {
+  height: 100%;
+  position: relative;
+}
+
 .scrollable-content {
   height: 80vh;
   white-space: pre-wrap;
   overflow: auto;
+}
+
+.ant-collapse-header {
+  background-color: white !important;
+  border: 1px solid #f6f4f4;
+}
+
+.custom-collapse-content {
+  padding: 0;
+}
+
+.ant-collapse-content-box {
+  padding: 0;
+}
+
+.custom {
+  .ant-collapse-content-box {
+    padding: 12px 0 0 12px !important;
+  }
+}
+
+.custom-title {
+  margin: 0 0 0 8;
 }

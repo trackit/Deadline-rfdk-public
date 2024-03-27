@@ -25,17 +25,18 @@ interface LaunchSpecification {
     SubnetId: string;
 }
 
-interface LaunchTemplateSpecification {
-    Version: string;
+export interface LaunchTemplateSpecification {
     LaunchTemplateId: string;
+    Version: string;
 }
 
-interface Override {
-    SubnetId: string;
+export interface Override {
     InstanceType: string;
+    SubnetId: string | string[];
+    Priority: number;
 }
 
-interface LaunchTemplateConfig {
+export interface LaunchTemplateConfig {
     LaunchTemplateSpecification: LaunchTemplateSpecification;
     Overrides: Override[];
 }

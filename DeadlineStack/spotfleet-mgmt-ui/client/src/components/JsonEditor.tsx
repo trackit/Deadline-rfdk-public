@@ -1,5 +1,20 @@
 import React from 'react';
-import MonacoEditor from 'react-monaco-editor';
+import Editor, { loader } from '@monaco-editor/react';
+
+loader.init().then((monaco) => {
+    monaco.editor.defineTheme('myTheme', {
+        base: 'vs',
+        inherit: true,
+        rules: [
+            { token: 'string.key.json', foreground: '#004785', fontStyle: 'bold' },
+            { token: 'number.json', foreground: '#d19a66' },
+            { token: 'boolean.json', foreground: '#042b4e' },
+        ],
+        colors: {
+            'editor.background': '#ffffff',
+        },
+    });
+});
 
 interface JsonEditorProps {
     initialValue: string;
@@ -7,12 +22,14 @@ interface JsonEditorProps {
 }
 
 const JsonEditor: React.FC<JsonEditorProps> = ({ initialValue, onChange }) => {
-    const handleEditorChange = (newValue: string, e: any) => {
-        onChange(newValue);
+    const handleEditorChange = (newValue: string | undefined, e: any) => {
+        if (newValue)
+            onChange(newValue);
     };
 
     return (
-        <MonacoEditor
+        <Editor
+            theme='myTheme'
             height='80vh'
             language="json"
             value={initialValue}
