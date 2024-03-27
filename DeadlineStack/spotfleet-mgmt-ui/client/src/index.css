@@ -22,3 +22,23 @@ code {
   white-space: pre-wrap;
   overflow: auto;
 }
+
+.string {
+  color: #d7683c; /* Light blue */
+}
+
+.number {
+  color: #d19a66; /* Darker blue */
+}
+
+.boolean {
+  color: #042b4e; /* Another shade of blue */
+}
+
+.null {
+  color: #569cd6; /* Another shade of blue */
+}
+
+.key {
+  color: #004785; /* Same shade as null for consistency */
+}
