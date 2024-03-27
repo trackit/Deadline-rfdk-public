@@ -26,6 +26,13 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
     setActiveKey(key);
   };
 
+  const handleDeleteFleet = (fleetName: string) => {
+    const updatedFormValues = { ...formValues };
+    delete updatedFormValues[fleetName];
+    setFormValues(updatedFormValues);
+    onDataUpdate(updatedFormValues)
+  };
+
   const handleAllocationStrategyChange = (fleetName: string, allocationStrategy: string) => {
     setFormValues(prevFormValues => ({
       ...prevFormValues,
@@ -199,6 +206,9 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
             </Form.Item>
             <Form.Item>
               <Button onClick={() => handleExport()} >Export</Button>
+            </Form.Item>
+            <Form.Item>
+            <Button onClick={() => handleDeleteFleet(fleetName)}>Delete fleet</Button>
             </Form.Item>
           </Space>
         </Form>
