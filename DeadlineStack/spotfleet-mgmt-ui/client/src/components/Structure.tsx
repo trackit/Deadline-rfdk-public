@@ -5,11 +5,14 @@ import logo from '../assets/trackit_logo.png';
 import DynamicForm from './DynamicForm';
 import { Fleet } from '../interface';
 const { Title } = Typography;
+
 interface StructureProps {
     data: Record<string, any>;
 }
+
 const Structure: React.FC<StructureProps> = ({ data }) => {
     const [jsonData, setData] = useState(data);
+
     const updateData = (updatedData: Record<string, any>) => {
         setData(updatedData);
     };
@@ -52,4 +55,5 @@ const Structure: React.FC<StructureProps> = ({ data }) => {
         </div>
     );
 };
+
 export default Structure;

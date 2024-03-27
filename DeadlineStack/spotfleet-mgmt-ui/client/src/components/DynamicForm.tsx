@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button, notification, InputNumber, Typography, Collapse, Space } from 'antd';
+import { Form, Button, notification, InputNumber, Typography, Collapse, Space, Popconfirm, message } from 'antd';
 import { FleetFormProps, Fleet, LaunchTemplateConfig, Override } from '../interface';
-import { ArrowUpOutlined } from '@ant-design/icons';
+import { ArrowUpOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import InputField from './InputField';
 import BooleanSelector from './BooleanSelector';
 import DropDownSelector from './DropDownSelector';
@@ -32,7 +32,7 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
     setFormValues(updatedFormValues);
     onDataUpdate(updatedFormValues)
   };
-
+  
   const handleAllocationStrategyChange = (fleetName: string, allocationStrategy: string) => {
     setFormValues(prevFormValues => ({
       ...prevFormValues,
@@ -207,9 +207,18 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
             <Form.Item>
               <Button onClick={() => handleExport()} >Export</Button>
             </Form.Item>
-            <Form.Item>
-            <Button onClick={() => handleDeleteFleet(fleetName)}>Delete fleet</Button>
-            </Form.Item>
+           <Form.Item>
+           <Popconfirm
+            title="Delete the fleet"
+            description="Are you sure to delete this fleet?"
+            onConfirm={() => handleDeleteFleet(fleetName)}
+            icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+            okText="Yes"
+            cancelText="No"
+            >
+          <Button danger>Delete</Button>
+          </Popconfirm>
+           </Form.Item>
           </Space>
         </Form>
       </div>
