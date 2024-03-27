@@ -6,6 +6,7 @@ loader.init().then((monaco) => {
         base: 'vs',
         inherit: true,
         rules: [
+            { token: 'string.value.json', foreground: '#d19a66' },
             { token: 'string.key.json', foreground: '#004785', fontStyle: 'bold' },
             { token: 'number.json', foreground: '#d19a66' },
             { token: 'boolean.json', foreground: '#042b4e' },
