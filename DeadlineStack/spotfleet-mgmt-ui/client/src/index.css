@@ -22,7 +22,28 @@ code {
   white-space: pre-wrap;
   overflow: auto;
 }
+
 .logo {
   max-width: 100px;
   height: 26px;
+}
+
+.string {
+  color: #d7683c;
+}
+
+.number {
+  color: #d19a66;
+}
+
+.boolean {
+  color: #042b4e;
+}
+
+.null {
+  color: #569cd6;
+}
+
+.key {
+  color: #004785;
 }
