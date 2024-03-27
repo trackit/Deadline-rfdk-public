@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, Button, Flex, notification } from 'antd';
 import JsonEditor from './JsonEditor';
 import '../index.css'
+import { syntaxHighlight } from '../utils/syntaxHighlight';
 
 interface JsonPreviewCardProps {
     data: Record<string, any>;
@@ -54,7 +55,11 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
             return <JsonEditor initialValue={formattedJson} onChange={handleJsonEditorChange} />;
         return (
             <div className="scrollable-content">
-                {formattedJson}
+                <pre
+                dangerouslySetInnerHTML={{
+                    __html: syntaxHighlight(formattedJson)
+               }}
+               />
             </div >
         );
 
