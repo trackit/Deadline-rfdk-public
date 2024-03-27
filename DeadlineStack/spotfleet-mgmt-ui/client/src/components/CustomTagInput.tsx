@@ -36,7 +36,6 @@ const CustomTagInput: React.FC<CustomTagInputProps> = ({name, title, initialValu
 
   const handleClose = (removedTag: string) => {
     const newTags = tags.filter((tag) => tag !== removedTag);
-    console.log(newTags);
     setTags(newTags);
   };
 

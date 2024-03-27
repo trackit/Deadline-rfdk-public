@@ -10,10 +10,10 @@ interface InputFieldProps {
 }
 
 const InputField: React.FC<InputFieldProps> = ({ title, sentence, placeholder, initialValue, name }) => {
-  const [value, setValue] = useState(initialValue || ''); 
+  const [value, setValue] = useState(initialValue || '');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(event.target.value); 
+    setValue(event.target.value);
   };
 
   return (
@@ -21,7 +21,7 @@ const InputField: React.FC<InputFieldProps> = ({ title, sentence, placeholder, i
       <Typography.Title level={5}>{title}</Typography.Title>
       <p>{sentence}</p>
       <Form.Item name={name}>
-      <Input placeholder={placeholder} variant='filled' value={value} onChange={handleChange} defaultValue={value} />
+        <Input placeholder={placeholder} variant='filled' value={value} onChange={handleChange} defaultValue={value} />
       </Form.Item>
     </div>
   );

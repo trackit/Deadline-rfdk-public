@@ -9,7 +9,7 @@ import { AllocationStrategyValue, TypeValue } from '../data/ItemsValues';
 import TagSpecifications from './TagSpecifications';
 import LaunchTemplateConfigs from './LaunchTemplateConfigs';
 import InputFleetName from './InputFleetName';
-
+import '../index.css';
 
 const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
   const [submittedValues, setSubmittedValues] = useState<any>(null);
@@ -167,15 +167,21 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
     );
   }
 
+  const getFormHeight = (fleets: Fleet) => {
+    const numberOfKeys = Object.keys(fleets).length;
+    const height = 92 - (numberOfKeys * 6);
+    return `${height}vh`;
+  };
+
   const collapseItems = Object.entries(formValues).map(([fleetName, fleet]) => ({
     key: fleetName,
     label: fleetName,
     children: (
-      <div style={{ maxHeight: '500px', overflow: 'auto' }}>
+      <div style={{ maxHeight: getFormHeight(formData), overflow: 'auto', paddingRight: '8px' }}>
         <Form key={JSON.stringify(formValues)} onFinish={onFinish} initialValues={formValues}>
           <InputFleetName
             title="Setup your fleet"
-            sentence="Edit your fleet name"
+            sentence="Edit your fleet name:"
             placeholder="Fleet name"
             initialValue={fleetName}
             name={[fleetName, 'FleetName']}
@@ -186,7 +192,7 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
           <BooleanSelector label="TerminateInstancesWithExpiration" name={[fleetName, 'TerminateInstancesWithExpiration']} />
           <Typography.Title level={5}>Worker maximum capacity</Typography.Title>
           <Form.Item name={[fleetName, 'TargetCapacity']} >
-            <InputNumber min={0} variant="filled" style={{ width: 120 }}/>
+            <InputNumber min={0} variant="filled" style={{ width: 120 }} />
           </Form.Item>
           <BooleanSelector label="ReplaceUnhealthyInstances" name={[fleetName, 'ReplaceUnhealthyInstances']} />
           <DropDownSelector label="Type" name={[fleetName, 'Type']} items={TypeValue} />
@@ -218,6 +224,8 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
           expandIcon={({ isActive }) => <ArrowUpOutlined rotate={isActive ? 180 : 0} />}
           collapsible="header"
           items={[{ key, label, children }]}
+          className="custom"
+        // className='custom-collapse-content'
         />
       ))}
     </Space>
