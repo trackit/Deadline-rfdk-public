@@ -5,7 +5,7 @@ import FormList from "./FormList";
 interface TagSpecificationsProps {
     name: (string | number)[];
     subItems: string[];
-}
+} 
 
 const TagSpecifications: React.FC<TagSpecificationsProps> = ({ name, subItems }) => {
     return (

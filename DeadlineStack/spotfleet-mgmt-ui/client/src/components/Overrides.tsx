@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Input, Button, Space, Select, InputNumber } from "antd";
+import { Input, Button, Space, Select, InputNumber, Tag, type SelectProps } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { Override } from '../interface';
+type TagRender = SelectProps['tagRender'];
 
 interface OverridesProps {
     overrides: Override[];
@@ -9,11 +10,30 @@ interface OverridesProps {
     onChange: (overrides: Override[]) => void;
 }
 
+const tagRender: TagRender = (props) => {
+    const { label, value, closable, onClose } = props;
+    const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
+        event.preventDefault();
+        event.stopPropagation();
+    };
+    return (
+        <Tag
+            color='blue'
+            onMouseDown={onPreventMouseDown}
+            closable={closable}
+            onClose={onClose}
+            style={{ marginInlineEnd: 4 }}
+        >
+            {label}
+        </Tag>
+    );
+};
+
 const Overrides: React.FC<OverridesProps> = ({ overrides, prioritize, onChange }) => {
     const [localOverrides, setLocalOverrides] = useState<Override[]>(overrides);
 
     const handleAddOverride = () => {
-        const newOverrides = [...localOverrides, { SubnetId: [], InstanceType: '', Priority: 0 }];
+        const newOverrides = [...localOverrides, { SubnetId: [], InstanceType: '', Priority: 1 }];
         setLocalOverrides(newOverrides);
         onChange(newOverrides);
     };
@@ -37,9 +57,11 @@ const Overrides: React.FC<OverridesProps> = ({ overrides, prioritize, onChange }
         return (
             <InputNumber
                 min={1}
+                variant='filled'
                 value={localOverrides[index].Priority}
                 onChange={value => handleChange(index, 'Priority', value)}
-                placeholder="Priority"
+                placeholder="Set Priority"
+                style={{ width: 'auto' }}
             />
         );
     };
@@ -52,18 +74,20 @@ const Overrides: React.FC<OverridesProps> = ({ overrides, prioritize, onChange }
                         variant='filled'
                         value={override.InstanceType}
                         onChange={e => handleChange(index, 'InstanceType', e.target.value)}
-                        placeholder="Instance Type"
+                        placeholder="Enter an Instance Type"
                     />
                     <Select
                         mode="tags"
+                        variant='filled'
+                        tagRender={tagRender}
                         allowClear
-                        style={{ width: '100%' }}
+                        style={{ minWidth: '15vw' }}
                         value={override.SubnetId}
                         onChange={value => handleChange(index, 'SubnetId', value)}
-                        placeholder="Subnet Id"
+                        placeholder="Enter Subnets Id"
                     />
                     {renderPriority(prioritize, index)}
-                    <Button onClick={() => handleRemoveOverride(index)}>Remove</Button>
+                    <Button danger onClick={() => handleRemoveOverride(index)}>Remove</Button>
                 </Space>
             ))}
             <Button type="dashed" onClick={handleAddOverride} block icon={<PlusOutlined />}>
