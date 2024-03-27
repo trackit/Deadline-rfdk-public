@@ -62,8 +62,8 @@ export interface Fleet {
         TerminateInstancesWithExpiration: boolean;
         Type: string;
         TagSpecifications: TagSpecification[];
-        ValidFrom: string;
-        ValidUntil: string;
+        ValidFrom?: string;
+        ValidUntil?: string;
         InstanceInterruptionBehavior: string;
     };
 }
