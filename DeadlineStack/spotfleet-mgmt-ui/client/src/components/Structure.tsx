@@ -45,7 +45,7 @@ const Structure: React.FC<StructureProps> = ({ data }) => {
                 <Title level={3} style={{ margin: 0 }}>SFMT</Title>
             </Space>
             <Row gutter={16} style={{ height: '94%' }}>
-                <Col lg={10} sm={24}>
+                <Col lg={10} sm={24} style={{ height: '93vh' }}>
                     <DynamicForm formData={jsonData} onDataUpdate={updateData} />
                 </Col>
                 <Col lg={14} sm={24}>

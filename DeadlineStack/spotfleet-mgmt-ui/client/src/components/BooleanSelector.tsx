@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Switch } from 'antd';
+import { Form, Switch, Typography } from 'antd';
 
 interface BooleanSelectorProps {
     label: string | number;
@@ -8,9 +8,12 @@ interface BooleanSelectorProps {
 
 const BooleanSelector: React.FC<BooleanSelectorProps> = ({ label, name }) => {
     return (
-        <Form.Item label={label} name={name}>
-            <Switch checkedChildren="True" unCheckedChildren="False" />
-        </Form.Item>
+        <>
+            <Typography.Title level={5}>{label}</Typography.Title>
+            <Form.Item name={name}>
+                <Switch checkedChildren="True" unCheckedChildren="False" />
+            </Form.Item>
+        </>
     );
 }
 

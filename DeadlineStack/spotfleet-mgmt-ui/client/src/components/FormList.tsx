@@ -8,7 +8,6 @@ interface FormListProps {
 }
 
 const FormList: React.FC<FormListProps> = ({ name, subItems }) => {
-    console.log(name)
  return (
     <>
     <Typography.Title level={5}>{name[name.length - 1]}</Typography.Title>
