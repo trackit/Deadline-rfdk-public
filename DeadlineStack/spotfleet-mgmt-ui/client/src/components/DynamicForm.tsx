@@ -182,7 +182,7 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
 
   const collapseItems = Object.entries(formValues).map(([fleetName, fleet]) => ({
     key: fleetName,
-    label: fleetName,
+    label: <Typography.Text strong>{fleetName}</Typography.Text>,
     children: (
       <div style={{ maxHeight: getFormHeight(formData), overflow: 'auto', paddingRight: '8px' }}>
         <Form key={JSON.stringify(formValues)} onFinish={onFinish} initialValues={formValues}>
@@ -194,12 +194,12 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
             name={[fleetName, 'FleetName']}
           />
           <DropDownSelector label="AllocationStrategy" name={[fleetName, 'AllocationStrategy']} items={AllocationStrategyValue} onChange={(value) => handleAllocationStrategyChange(fleetName, value)} />
-          <InputField title='IamFleetRole' name={[fleetName, 'IamFleetRole']} placeholder="IamFleetRole" />
+          <InputField title='IamFleetRole' name={[fleetName, 'IamFleetRole']} placeholder="Enter an IamFleetRole" />
           {renderLaunchTemplateConfig(fleetName, formValues)}
           <BooleanSelector label="TerminateInstancesWithExpiration" name={[fleetName, 'TerminateInstancesWithExpiration']} />
           <Typography.Title level={5}>Worker maximum capacity</Typography.Title>
           <Form.Item name={[fleetName, 'TargetCapacity']} >
-            <InputNumber min={0} variant="filled" style={{ width: 120 }} />
+            <InputNumber min={0} variant="filled" placeholder='Select a number' style={{ width: 'auto' }} />
           </Form.Item>
           <BooleanSelector label="ReplaceUnhealthyInstances" name={[fleetName, 'ReplaceUnhealthyInstances']} />
           <DropDownSelector label="Type" name={[fleetName, 'Type']} items={TypeValue} />
@@ -244,7 +244,6 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
           collapsible="header"
           items={[{ key, label, children }]}
           className="custom"
-        // className='custom-collapse-content'
         />
       ))}
     </Space>

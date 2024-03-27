@@ -29,7 +29,7 @@ const FormItem: React.FC<FormItemProps> = ({ fieldValue, fieldPath }) => {
     <InputField
       title={`Setup ${fieldPath[fieldPath.length - 1].toString()}`}
       sentence=""
-      placeholder={`${fieldPath[fieldPath.length - 1].toString()}`}
+      placeholder={`Enter a ${fieldPath[fieldPath.length - 1].toString()}`}
       name={fieldPath}
     />
   );
