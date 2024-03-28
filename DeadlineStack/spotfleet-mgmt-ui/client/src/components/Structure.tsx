@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Typography, Row, Col, Space } from 'antd';
+import { Typography, Row, Col, Button, Space } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import JsonPreviewCard from './JsonPreviewCard';
 import logo from '../assets/trackit_logo.png';
 import DynamicForm from './DynamicForm';
 import { Fleet } from '../interface';
+
 const { Title } = Typography;
 
 interface StructureProps {
@@ -16,6 +18,7 @@ const Structure: React.FC<StructureProps> = ({ data }) => {
     const updateData = (updatedData: Record<string, any>) => {
         setData(updatedData);
     };
+
     const getDefaultFleet = (): Fleet[string] => ({
         AllocationStrategy: '',
         IamFleetRole: '',
@@ -28,6 +31,7 @@ const Structure: React.FC<StructureProps> = ({ data }) => {
         TagSpecifications: [],
         InstanceInterruptionBehavior: ''
     });
+
     const handleAddFleet = () => {
         const newFleetName = `fleet_${Object.keys(jsonData).length + 1}`;
         setData(prevFormValues => ({
@@ -35,6 +39,13 @@ const Structure: React.FC<StructureProps> = ({ data }) => {
             [newFleetName]: getDefaultFleet(),
         }));
     };
+
+    const getFormHeight = (fleets: Fleet) => {
+        const numberOfKeys = Object.keys(fleets).length;
+        const height = 88;
+        return `${height}vh`;
+    };
+
     return (
         <div style={{ height: '96%', padding: '16px' }}>
             <Space style={{ marginBottom: '20px' }}>
@@ -45,8 +56,11 @@ const Structure: React.FC<StructureProps> = ({ data }) => {
                 <Title level={3} style={{ margin: 0 }}>SFMT</Title>
             </Space>
             <Row gutter={16} style={{ height: '94%' }}>
-                <Col lg={10} sm={24} style={{ height: '93vh' }}>
-                    <DynamicForm formData={jsonData} onDataUpdate={updateData} />
+                <Col lg={10} sm={24} style={{ height: '93vh', justifyContent: 'space-between' }}>
+                    <div style={{ marginBottom: '16px', height: getFormHeight(jsonData), overflow: 'auto' }}>
+                        <DynamicForm formData={jsonData} onDataUpdate={updateData} />
+                    </div>
+                    <Button type="primary" icon={<PlusOutlined />} onClick={handleAddFleet}>Add Fleet</Button>
                 </Col>
                 <Col lg={14} sm={24}>
                     <JsonPreviewCard data={jsonData} onDataUpdate={updateData} />

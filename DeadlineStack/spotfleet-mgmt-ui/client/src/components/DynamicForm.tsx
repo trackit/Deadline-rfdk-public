@@ -174,17 +174,11 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
     );
   }
 
-  const getFormHeight = (fleets: Fleet) => {
-    const numberOfKeys = Object.keys(fleets).length;
-    const height = 92 - (numberOfKeys * 6);
-    return `${height}vh`;
-  };
-
   const collapseItems = Object.entries(formValues).map(([fleetName, fleet]) => ({
     key: fleetName,
     label: <Typography.Text strong>{fleetName}</Typography.Text>,
     children: (
-      <div style={{ maxHeight: getFormHeight(formData), overflow: 'auto', paddingRight: '8px' }}>
+      // <div style={{ maxHeight: '70vh', overflow: 'auto', paddingRight: '8px' }}>
         <Form key={JSON.stringify(formValues)} onFinish={onFinish} initialValues={formValues}>
           <InputFleetName
             title="Setup your fleet"
@@ -227,7 +221,7 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
             </Form.Item>
           </Space>
         </Form>
-      </div>
+      // </div>
     ),
   }));
 
