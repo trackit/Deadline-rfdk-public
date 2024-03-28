@@ -67,7 +67,7 @@ const Overrides: React.FC<OverridesProps> = ({ overrides, prioritize, onChange }
     };
 
     return (
-        <div style={{ paddingBottom: '24px' }}>
+        <div style={{ paddingBottom: '26.72px' }}>
             {localOverrides.map((override, index) => (
                 <Space key={index} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
                     <Input

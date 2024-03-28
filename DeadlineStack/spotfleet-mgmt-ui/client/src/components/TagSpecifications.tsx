@@ -9,13 +9,13 @@ interface TagSpecificationsProps {
 
 const TagSpecifications: React.FC<TagSpecificationsProps> = ({ name, subItems }) => {
     return (
-        <>
+        <div>
             <Typography.Title level={5}>{name[name.length - 1]}</Typography.Title>
             <Form.Item label={subItems[0]} name={[name[0], 'TagSpecifications', 0, subItems[0]]} >
                 <Input placeholder="spot-fleet-request"  variant="filled"/>
             </Form.Item>
             <FormList name={[name[0], 'TagSpecifications', 0, subItems[1]]} subItems={['Key', 'Value']} />
-        </>
+        </div>
     );
 }
 

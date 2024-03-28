@@ -28,8 +28,6 @@ code {
   overflow: auto;
 }
 
-
-
 .card {
   height: 100%;
   position: relative;
@@ -86,10 +84,20 @@ code {
 
 .custom {
   .ant-collapse-content-box {
-    padding: 12px 0 0 12px !important;
+    padding: 26.72px 12px !important;
   }
 }
 
 .custom-title {
   margin: 0 0 0 8;
+}
+
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(195, 192, 192);
+  border-radius: 7px;
 }

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Flex, notification } from 'antd';
+import { syntaxHighlight } from '../utils/syntaxHighlight';
 import JsonEditor from './JsonEditor';
 import '../index.css'
-import { syntaxHighlight } from '../utils/syntaxHighlight';
 
 interface JsonPreviewCardProps {
     data: Record<string, any>;
@@ -56,10 +56,10 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
         return (
             <div className="scrollable-content">
                 <pre
-                dangerouslySetInnerHTML={{
-                    __html: syntaxHighlight(formattedJson)
-               }}
-               />
+                    dangerouslySetInnerHTML={{
+                        __html: syntaxHighlight(formattedJson)
+                    }}
+                />
             </div >
         );
 
@@ -110,15 +110,16 @@ const JsonPreviewCard: React.FC<JsonPreviewCardProps> = ({ data, onDataUpdate })
     return (
         <div className='card'>
             <Card title="JSON Code preview" extra={
-            <Flex gap="small" wrap="wrap">
-                <Button type="default" onClick={() => handleEditClick(isEditing)}>{isEditing ? 'Save' : 'Edit'}</Button>
-                <Button type="default" onClick={uploadJson}>Upload</Button>
-                <Button type="primary" onClick={downloadJson}>Download</Button>
-            </Flex>
-        } style={{ height : '100%'}}>
-            {getRenderedContent(isEditing)}
-        </Card>
+                <Flex gap="small" wrap="wrap">
+                    <Button type="default" onClick={() => handleEditClick(isEditing)}>{isEditing ? 'Save' : 'Edit'}</Button>
+                    <Button type="default" onClick={uploadJson}>Upload</Button>
+                    <Button type="primary" onClick={downloadJson}>Download</Button>
+                </Flex>
+            } style={{ height: '100%' }}>
+                {getRenderedContent(isEditing)}
+            </Card>
         </div>
     );
 };
+
 export default JsonPreviewCard;

@@ -7,23 +7,6 @@ interface Ebs {
     VolumeType: string;
 
 }
-interface BlockDeviceMapping {
-    DeviceName: string;
-    Ebs: Ebs
-}
-
-interface IamInstanceProfile {
-    Arn: string;
-}
-
-interface LaunchSpecification {
-    ImageId: string;
-    InstanceType: string;
-    BlockDeviceMappings: BlockDeviceMapping[];
-    KeyName: string;
-    IamInstanceProfile: IamInstanceProfile;
-    SubnetId: string;
-}
 
 export interface LaunchTemplateSpecification {
     LaunchTemplateId: string;
@@ -55,7 +38,7 @@ export interface Fleet {
     [key: string]: {
         AllocationStrategy: string;
         IamFleetRole: string;
-        LaunchSpecifications: LaunchSpecification[];
+        LaunchSpecifications: [];
         LaunchTemplateConfigs: LaunchTemplateConfig[];
         ReplaceUnhealthyInstances: boolean;
         TargetCapacity: number;

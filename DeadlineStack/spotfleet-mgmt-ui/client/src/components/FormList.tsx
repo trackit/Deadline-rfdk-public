@@ -15,15 +15,15 @@ const FormList: React.FC<FormListProps> = ({ name, subItems }) => {
         {(fields, { add, remove }) => (
           <>
             {fields.map(({ key, name, ...restField }) => (
-              <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+              <Space key={key} style={{ display: 'flex', marginBottom: 0 }} align="baseline">
                 {subItems.map(subItem => (
                   <Form.Item
                     {...restField}
                     key={`${name}-${subItem}`}
                     name={[name, subItem]}
+                    style={{ marginBottom: "8px" }}
                   >
-                    <Input variant='filled' placeholder={`Enter a ${subItem.toString()}`}/>
-
+                    <Input variant='filled' placeholder={`Enter a ${subItem.toString()}`} />
                   </Form.Item>
                 ))}
                 <Button danger onClick={() => remove(name)}>Remove</Button>

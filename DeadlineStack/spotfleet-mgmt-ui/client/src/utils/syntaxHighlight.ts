@@ -1,5 +1,5 @@
 export function syntaxHighlight(json: string): string {
-    if (!json) return ""; // No JSON from response
+    if (!json) return "";
   
     json = json
         .replace(/&/g, "&amp;")

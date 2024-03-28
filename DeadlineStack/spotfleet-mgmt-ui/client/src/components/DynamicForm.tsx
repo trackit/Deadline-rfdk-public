@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button, notification, InputNumber, Typography, Collapse, Space, Popconfirm, message } from 'antd';
+import { Form, Button, notification, InputNumber, Typography, Collapse, Space, Popconfirm } from 'antd';
 import { FleetFormProps, Fleet, LaunchTemplateConfig, Override } from '../interface';
 import { ArrowUpOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import InputField from './InputField';
@@ -178,50 +178,40 @@ const DynamicForm = ({ formData, onDataUpdate }: FleetFormProps) => {
     key: fleetName,
     label: <Typography.Text strong>{fleetName}</Typography.Text>,
     children: (
-      // <div style={{ maxHeight: '70vh', overflow: 'auto', paddingRight: '8px' }}>
-        <Form key={JSON.stringify(formValues)} onFinish={onFinish} initialValues={formValues}>
-          <InputFleetName
-            title="Setup your fleet"
-            sentence="Edit your fleet name:"
-            placeholder="Fleet name"
-            initialValue={fleetName}
-            name={[fleetName, 'FleetName']}
-          />
-          <DropDownSelector label="AllocationStrategy" name={[fleetName, 'AllocationStrategy']} items={AllocationStrategyValue} onChange={(value) => handleAllocationStrategyChange(fleetName, value)} />
-          <InputField title='IamFleetRole' name={[fleetName, 'IamFleetRole']} placeholder="Enter an IamFleetRole" />
-          {renderLaunchTemplateConfig(fleetName, formValues)}
-          <BooleanSelector label="TerminateInstancesWithExpiration" name={[fleetName, 'TerminateInstancesWithExpiration']} />
-          <Typography.Title level={5}>Worker maximum capacity</Typography.Title>
-          <Form.Item name={[fleetName, 'TargetCapacity']} >
-            <InputNumber min={0} variant="filled" placeholder='Select a number' style={{ width: 'auto' }} />
-          </Form.Item>
-          <BooleanSelector label="ReplaceUnhealthyInstances" name={[fleetName, 'ReplaceUnhealthyInstances']} />
-          <DropDownSelector label="Type" name={[fleetName, 'Type']} items={TypeValue} />
-          <Form.Item >
-            <TagSpecifications name={[fleetName, 'TagSpecifications']} subItems={['ResourceType', 'Tags']} />
-          </Form.Item>
-          <Space>
-            <Form.Item>
-              <Button type="primary" htmlType="submit"  >Submit</Button>
-            </Form.Item>
-            <Form.Item>
-              <Button onClick={() => handleExport()} >Export</Button>
-            </Form.Item>
-            <Form.Item>
-              <Popconfirm
-                title="Delete the fleet"
-                description="Are you sure to delete this fleet?"
-                onConfirm={() => handleDeleteFleet(fleetName)}
-                icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-                okText="Yes"
-                cancelText="No"
-              >
-                <Button danger>Delete</Button>
-              </Popconfirm>
-            </Form.Item>
-          </Space>
-        </Form>
-      // </div>
+      <Form key={JSON.stringify(formValues)} onFinish={onFinish} initialValues={formValues}>
+        <InputFleetName
+          title="Setup your fleet"
+          sentence="Edit your fleet name:"
+          placeholder="Fleet name"
+          initialValue={fleetName}
+          name={[fleetName, 'FleetName']}
+        />
+        <DropDownSelector label="AllocationStrategy" name={[fleetName, 'AllocationStrategy']} items={AllocationStrategyValue} onChange={(value) => handleAllocationStrategyChange(fleetName, value)} />
+        <InputField title='IamFleetRole' name={[fleetName, 'IamFleetRole']} placeholder="Enter an IamFleetRole" />
+        <BooleanSelector label="TerminateInstancesWithExpiration" name={[fleetName, 'TerminateInstancesWithExpiration']} />
+        <Typography.Title level={5}>Worker maximum capacity</Typography.Title>
+        <Form.Item name={[fleetName, 'TargetCapacity']} >
+          <InputNumber min={0} variant="filled" placeholder='Select a number' style={{ width: 'auto' }} />
+        </Form.Item>
+        <BooleanSelector label="ReplaceUnhealthyInstances" name={[fleetName, 'ReplaceUnhealthyInstances']} />
+        <DropDownSelector label="Type" name={[fleetName, 'Type']} items={TypeValue} />
+        <TagSpecifications name={[fleetName, 'TagSpecifications']} subItems={['ResourceType', 'Tags']} />
+        {renderLaunchTemplateConfig(fleetName, formValues)}
+        <Space>
+          <Button type="primary" htmlType="submit" >Submit</Button>
+          <Button onClick={() => handleExport()} >Export</Button>
+          <Popconfirm
+            title="Delete the fleet"
+            description="Are you sure to delete this fleet?"
+            onConfirm={() => handleDeleteFleet(fleetName)}
+            icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button danger>Delete</Button>
+          </Popconfirm>
+        </Space>
+      </Form>
     ),
   }));
 
