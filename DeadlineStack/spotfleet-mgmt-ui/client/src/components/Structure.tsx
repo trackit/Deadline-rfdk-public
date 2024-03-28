@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Typography, Row, Col } from 'antd';
+import { Typography, Row, Col, Image, Space } from 'antd';
 import JsonPreviewCard from './JsonPreviewCard';
+import logo from '../assets/trackit_logo.png';
 
 const { Title } = Typography;
 
@@ -16,7 +17,13 @@ const Structure: React.FC<StructureProps> = ({ data }) => {
     };
     return (
         <div style={{ height: '96%', padding: '16px' }}>
+            <Space style={{ marginBottom: '20px' }}>
+            <img
+            className="logo"
+            src={logo}
+            />
             <Title level={3} style={{ margin: 0 }}>SFMT</Title>
+            </Space>
             <Row gutter={16} style={{ height: '94%' }}>
                 <Col lg={10} sm={24}>
                     {/* Add fleet configuration here */}
