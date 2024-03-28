@@ -42,7 +42,7 @@ const Structure: React.FC<StructureProps> = ({ data }) => {
 
     const getFormHeight = (fleets: Fleet) => {
         const numberOfKeys = Object.keys(fleets).length;
-        const height = 88;
+        const height = 86;
         return `${height}vh`;
     };
 
